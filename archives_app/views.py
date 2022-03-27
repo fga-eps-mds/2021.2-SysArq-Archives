@@ -129,7 +129,7 @@ class BoxArchivingView(views.APIView):
         docs = list()
 
         for doc_n in documents_list:
-            d_id = DocumentName.objects.get(pk=doc_n['document_name_id'])
+            d_id = DocumentName.objects.get(pk=doc_n['document_type_id'])
             d_t = DocumentNames.objects.create(
                 document_name_id=d_id,
                 year=doc_n['year'],
@@ -201,8 +201,8 @@ class BoxArchivingDetailsView(views.APIView):
                 doc_n = DocumentNames.objects.get(pk=doc)
                 doc_name = DocumentNameSerializer(doc_n.document_name_id)
                 doc_name = doc_name.data
-                docs_dict['document_name_id'] = doc_name['id']
-                docs_dict['document_name_name'] = doc_name['document_name']
+                docs_dict['document_type_id'] = doc_name['id']
+                docs_dict['document_type_name'] = doc_name['document_name']
                 docs_dict['year'] = doc_n.year
                 docs_dict['month'] = doc_n.month
                 docs_dict['temporality_date'] = doc_n.temporality_date
