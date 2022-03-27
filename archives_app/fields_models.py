@@ -7,7 +7,7 @@ class DocumentSubject(models.Model):
     temporality = models.IntegerField(blank=True, null=True)
 
 
-class DocumentType(models.Model):
+class DocumentName(models.Model):
     document_name = models.CharField(max_length=100, blank=True, null=True)
     subject_name = models.CharField(max_length=100, blank=True, null=True)
     temporality = models.IntegerField(blank=True, null=True)

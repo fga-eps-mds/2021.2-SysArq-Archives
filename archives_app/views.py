@@ -1,13 +1,13 @@
 from rest_framework import viewsets, views
 from rest_framework.response import Response
 from .fields_serializers import BoxAbbreviationsSerializer
-from .fields_serializers import (DocumentSubjectSerializer, DocumentTypeSerializer,
+from .fields_serializers import (DocumentSubjectSerializer, DocumentNameSerializer,
                                  UnitySerializer, RackSerializer, PublicWorkerSerializer)
 from .fields_serializers import FrontCoverSerializer, ShelfSerializer
-from .fields_models import BoxAbbreviations, DocumentSubject, DocumentType
+from .fields_models import BoxAbbreviations, DocumentSubject, DocumentName
 from .fields_models import Unity, Shelf, FrontCover, Rack, PublicWorker
 from .documents_models import (BoxArchiving, FrequencyRelation, AdministrativeProcess,
-                               OriginBox, FrequencySheet, OriginBoxSubject, DocumentTypes)
+                               OriginBox, FrequencySheet, OriginBoxSubject, DocumentNames)
 from .documents_serializers import (FrequencySheetSerializer,
                                     AdministrativeProcessSerializer,
                                     FrequencyRelationSerializer,
@@ -23,12 +23,12 @@ class DocumentSubjectViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentSubjectSerializer
 
 
-class DocumentTypeViewSet(viewsets.ModelViewSet):
+class DocumentNameViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows document types to be viewed or edited.
     """
-    queryset = DocumentType.objects.all()
-    serializer_class = DocumentTypeSerializer
+    queryset = DocumentName.objects.all()
+    serializer_class = DocumentNameSerializer
 
 
 class UnityViewSet(viewsets.ModelViewSet):
@@ -125,13 +125,13 @@ class BoxArchivingView(views.APIView):
                                                       dates=subject['dates'])
                 box.subject.add(sub.id)
 
-        documents_list = request.data['document_types']
+        documents_list = request.data['document_names']
         docs = list()
 
         for doc_n in documents_list:
-            d_id = DocumentType.objects.get(pk=doc_n['document_type_id'])
-            d_t = DocumentTypes.objects.create(
-                document_type_id=d_id,
+            d_id = DocumentName.objects.get(pk=doc_n['document_name_id'])
+            d_t = DocumentNames.objects.create(
+                document_name_id=d_id,
                 year=doc_n['year'],
                 month=doc_n['month'],
                 temporality_date=doc_n['temporality_date'])
@@ -173,7 +173,7 @@ class BoxArchivingView(views.APIView):
                 box_archiving.save()
 
         for doc in docs:
-            box_archiving.document_types.add(doc.id)
+            box_archiving.document_names.add(doc.id)
 
         return Response(status=201)
 
@@ -194,15 +194,15 @@ class BoxArchivingDetailsView(views.APIView):
             queryset = BoxArchiving.objects.get(pk=pk)
             serializer = BoxArchivingSerializer(queryset)
 
-            doc_types = serializer.data['document_types']
+            doc_names = serializer.data['document_names']
             docs = list()
-            for doc in doc_types:
+            for doc in doc_names:
                 docs_dict = {}
-                doc_n = DocumentTypes.objects.get(pk=doc)
-                doc_type = DocumentTypeSerializer(doc_n.document_type_id)
-                doc_type = doc_type.data
-                docs_dict['document_type_id'] = doc_type['id']
-                docs_dict['document_type_name'] = doc_type['document_name']
+                doc_n = DocumentNames.objects.get(pk=doc)
+                doc_name = DocumentNameSerializer(doc_n.document_name_id)
+                doc_name = doc_name.data
+                docs_dict['document_name_id'] = doc_name['id']
+                docs_dict['document_name_name'] = doc_name['document_name']
                 docs_dict['year'] = doc_n.year
                 docs_dict['month'] = doc_n.month
                 docs_dict['temporality_date'] = doc_n.temporality_date
@@ -223,7 +223,7 @@ class BoxArchivingDetailsView(views.APIView):
 
             final_dict = serializer.data
             final_dict['origin_box'] = box_dict
-            final_dict['document_types'] = docs
+            final_dict['document_names'] = docs
             return Response(final_dict, status=200)
 
         except BoxArchiving.DoesNotExist:
@@ -268,7 +268,7 @@ class SearchView(views.APIView):
                 elif 'subject_id' in list(filter_dict.keys())[0]:
                     contains = '{}__subject_name__icontains'.format(
                         list(filter_dict.keys())[0])
-                elif 'document_type_id' in list(filter_dict.keys())[0]:
+                elif 'document_name_id' in list(filter_dict.keys())[0]:
                     contains = '{}__document_name__icontains'.format(
                         list(filter_dict.keys())[0])
                 elif 'sender_unity' in list(filter_dict.keys())[0]:
@@ -295,11 +295,11 @@ class SearchView(views.APIView):
                 return_dict['box_archiving'] = BoxArchivingSerializer(
                     box_archiving, many=True).data
 
-            if 'document_type_id' in list(filter_dict.keys())[0]:
+            if 'document_name_id' in list(filter_dict.keys())[0]:
                 boxes = []
                 for box in box_archiving:
-                    doc_types = box.document_types.filter(**filter_dict_fk)
-                    if box not in boxes and doc_types:
+                    doc_names = box.document_names.filter(**filter_dict_fk)
+                    if box not in boxes and doc_names:
                         boxes.append(box)
                 return_dict['box_archiving'] = BoxArchivingSerializer(
                     boxes, many=True).data
@@ -307,8 +307,8 @@ class SearchView(views.APIView):
             if 'temporality_date' in list(filter_dict.keys())[0]:
                 boxes = []
                 for box in box_archiving:
-                    doc_types = box.document_types.filter(**filter_dict)
-                    if box not in boxes and doc_types:
+                    doc_names = box.document_names.filter(**filter_dict)
+                    if box not in boxes and doc_names:
                         boxes.append(box)
                 return_dict['box_archiving'] = BoxArchivingSerializer(
                     boxes, many=True).data

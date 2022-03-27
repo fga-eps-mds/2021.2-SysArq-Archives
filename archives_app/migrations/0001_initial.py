@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='DocumentType',
+            name='DocumentName',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('document_name', models.CharField(blank=True, max_length=100, null=True)),
@@ -129,18 +129,18 @@ class Migration(migrations.Migration):
                 ('notes', models.CharField(blank=True, max_length=300, null=True)),
                 ('process_number', models.CharField(blank=True, max_length=20, null=True)),
                 ('temporality_date', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1900)])),
-                ('document_type_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.documenttype')),
+                ('document_name_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.DocumentName')),
                 ('person_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.publicworker')),
             ],
         ),
         migrations.CreateModel(
-            name='DocumentTypes',
+            name='DocumentNames',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('year', models.IntegerField(validators=[django.core.validators.MinValueValidator(1900)])),
                 ('month', models.CharField(blank=True, max_length=3, null=True)),
                 ('temporality_date', models.IntegerField(validators=[django.core.validators.MinValueValidator(1900)])),
-                ('document_type_id', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='archives_app.documenttype')),
+                ('document_name_id', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='archives_app.DocumentName')),
             ],
         ),
         migrations.AddField(
@@ -176,7 +176,7 @@ class Migration(migrations.Migration):
                 ('document_date', models.DateField()),
                 ('reference_period', django.contrib.postgres.fields.ArrayField(base_field=models.DateField(), size=None)),
                 ('temporality_date', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1900)])),
-                ('document_type_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.documenttype')),
+                ('document_name_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.DocumentName')),
             ],
             bases=('archives_app.relation',),
         ),
@@ -187,7 +187,7 @@ class Migration(migrations.Migration):
                 ('document_url', models.URLField(blank=True, null=True)),
                 ('cover_sheet', models.CharField(blank=True, max_length=100, null=True)),
                 ('abbreviation_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.boxabbreviations')),
-                ('document_types', models.ManyToManyField(to='archives_app.DocumentTypes')),
+                ('document_names', models.ManyToManyField(to='archives_app.DocumentNames')),
                 ('origin_box_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.originbox')),
                 ('rack_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.rack')),
                 ('shelf_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.shelf')),
