@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from archives_app.fields_models import (BoxAbbreviations, DocumentName,
-                                        DocumentSubject, Shelf,
+from archives_app.fields_models import (BoxAbbreviations, DocumentName, Shelf,
                                         Unity, Rack, PublicWorker)
 from django.core.validators import MinValueValidator
 
@@ -79,7 +78,7 @@ class AdministrativeProcess(Document):
     notice_date = models.DateField()
     interested = models.CharField(max_length=150)
     cpf_cnpj = models.CharField(max_length=15, blank=True, null=True)
-    subject_id = models.ForeignKey(DocumentSubject, on_delete=models.PROTECT)
+  #  subject_id = models.ForeignKey(DocumentSubject, on_delete=models.PROTECT)
     dest_unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
                                       null=True, related_name='unity')
     reference_month_year = models.DateField(blank=True, null=True)

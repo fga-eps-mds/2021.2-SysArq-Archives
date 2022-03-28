@@ -34,14 +34,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='DocumentSubject',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subject_name', models.CharField(blank=True, max_length=100, null=True)),
-                ('temporality', models.IntegerField(blank=True, null=True)),
-            ],
-        ),
-        migrations.CreateModel(
             name='DocumentName',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -164,7 +156,7 @@ class Migration(migrations.Migration):
                 ('temporality_date', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1900)])),
                 ('dest_unity_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='unity', to='archives_app.unity')),
                 ('sender_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.publicworker')),
-                ('subject_id', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='archives_app.documentsubject')),
+            #   ('subject_id', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='archives_app.documentsubject')),
                 ('unity_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='unfiled_unity', to='archives_app.unity')),
             ],
             bases=('archives_app.document',),

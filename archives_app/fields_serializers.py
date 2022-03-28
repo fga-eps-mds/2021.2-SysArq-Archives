@@ -1,15 +1,6 @@
 from rest_framework import serializers
-from .fields_models import BoxAbbreviations, FrontCover, DocumentSubject
+from .fields_models import BoxAbbreviations, FrontCover
 from .fields_models import DocumentName, Shelf, Unity, Rack, PublicWorker
-
-
-class DocumentSubjectSerializer(serializers.ModelSerializer):
-
-    class Meta:
-
-        model = DocumentSubject
-        fields = '__all__'
-
 
 class DocumentNameSerializer(serializers.ModelSerializer):
 

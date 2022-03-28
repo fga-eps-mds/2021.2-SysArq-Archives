@@ -1,12 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 
-
-class DocumentSubject(models.Model):
-    subject_name = models.CharField(max_length=100, blank=True, null=True)
-    temporality = models.IntegerField(blank=True, null=True)
-
-
 class DocumentName(models.Model):
     document_name = models.CharField(max_length=100, blank=True, null=True)
     subject_name = models.CharField(max_length=100, blank=True, null=True)

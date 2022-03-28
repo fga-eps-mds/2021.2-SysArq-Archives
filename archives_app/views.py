@@ -1,10 +1,10 @@
 from rest_framework import viewsets, views
 from rest_framework.response import Response
 from .fields_serializers import BoxAbbreviationsSerializer
-from .fields_serializers import (DocumentSubjectSerializer, DocumentNameSerializer,
+from .fields_serializers import (DocumentNameSerializer,
                                  UnitySerializer, RackSerializer, PublicWorkerSerializer)
 from .fields_serializers import FrontCoverSerializer, ShelfSerializer
-from .fields_models import BoxAbbreviations, DocumentSubject, DocumentName
+from .fields_models import BoxAbbreviations, DocumentName
 from .fields_models import Unity, Shelf, FrontCover, Rack, PublicWorker
 from .documents_models import (BoxArchiving, FrequencyRelation, AdministrativeProcess,
                                OriginBox, FrequencySheet, OriginBoxSubject, DocumentNames)
@@ -13,15 +13,6 @@ from .documents_serializers import (FrequencySheetSerializer,
                                     FrequencyRelationSerializer,
                                     BoxArchivingSerializer)
 import json
-
-
-class DocumentSubjectViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows document subjects to be viewed or edited.
-    """
-    queryset = DocumentSubject.objects.all()
-    serializer_class = DocumentSubjectSerializer
-
 
 class DocumentNameViewSet(viewsets.ModelViewSet):
     """

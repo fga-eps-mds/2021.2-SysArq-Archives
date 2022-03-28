@@ -113,10 +113,10 @@ class FrequencyRelationSerializer(FrequencySupport):
 
 class AdministrativeProcessSerializer(serializers.ModelSerializer):
 
-    def get_document_subject(self, obj):
-        if obj.subject_id is not None:
-            return obj.subject_id.subject_name
-        return None
+  # def get_document_subject(self, obj):
+  #      if obj.subject_id is not None:
+  #         return obj.subject_id.subject_name
+  #      return None
 
     def get_sender_unity(self, obj):
         if obj.sender_unity is not None:
@@ -130,9 +130,9 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
 
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
     sender_user_name = serializers.SerializerMethodField('get_sender_user')
-    document_subject_name = serializers.SerializerMethodField(
-        'get_document_subject'
-    )
+  #  document_subject_name = serializers.SerializerMethodField(
+  #      'get_document_subject'
+  #  )
 
     class Meta:
         model = AdministrativeProcess
@@ -153,10 +153,10 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "send_date",
                   "administrative_process_number",
                   "sender_unity",
-                  "subject_id",
+              #   "subject_id",
                   "dest_unity_id",
                   "unity_id",
-                  "document_subject_name",
+              #   "document_subject_name",
                   "sender_unity_name"
                   )
 
