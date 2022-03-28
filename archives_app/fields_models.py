@@ -41,6 +41,9 @@ class Shelf(models.Model):
 class Rack(models.Model):
     number = models.IntegerField(validators=[MinValueValidator(0)])
 
+class FileLocation(models.Model):
+    file = models.CharField(max_length=100)
+
 
 class FrontCover(models.Model):
     box_abbreviation = models.CharField(max_length=30, blank=True, null=True)
