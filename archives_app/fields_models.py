@@ -14,7 +14,7 @@ class DocumentType(models.Model):
 
 class PublicWorker(models.Model):
     name = models.CharField(max_length=150)
-    cpf = models.CharField(max_length=16)
+    cpf = models.CharField(max_length=11)
 
 
 class Unity(models.Model):
