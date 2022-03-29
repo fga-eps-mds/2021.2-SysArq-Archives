@@ -2,10 +2,10 @@ from rest_framework import viewsets, views
 from rest_framework.response import Response
 from .fields_serializers import BoxAbbreviationsSerializer
 from .fields_serializers import (DocumentSubjectSerializer, DocumentTypeSerializer,
-                                 UnitySerializer, RackSerializer, PublicWorkerSerializer)
+                                 UnitySerializer, RackSerializer, PublicWorkerSerializer, LocationSerializer)
 from .fields_serializers import FrontCoverSerializer, ShelfSerializer
 from .fields_models import BoxAbbreviations, DocumentSubject, DocumentType
-from .fields_models import Unity, Shelf, FrontCover, Rack, PublicWorker
+from .fields_models import Unity, Shelf, FrontCover, Rack, PublicWorker, FileLocation
 from .documents_models import (BoxArchiving, FrequencyRelation, AdministrativeProcess,
                                OriginBox, FrequencySheet, OriginBoxSubject, DocumentTypes)
 from .documents_serializers import (FrequencySheetSerializer,
@@ -69,6 +69,14 @@ class RackViewSet(viewsets.ModelViewSet):
     """
     queryset = Rack.objects.all()
     serializer_class = RackSerializer
+
+
+class LocationViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows racks to be viewed or edited.
+    """
+    queryset = FileLocation.objects.all()
+    serializer_class = LocationSerializer
 
 
 class FrontCoverViewSet(viewsets.ModelViewSet):
