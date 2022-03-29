@@ -15,6 +15,8 @@ class TestBoxAbreviationsEndpoints:
         data = {
             "number": 8,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
 
         api_client = APIClient()
@@ -35,6 +37,8 @@ class TestBoxAbreviationsEndpoints:
         data2 = {
             "number": 8,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
 
         api_client = APIClient()
@@ -50,10 +54,14 @@ class TestBoxAbreviationsEndpoints:
         data3 = {
             "number": 8,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
         data4 = {
             "number": 9,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
         api_client = APIClient()
         intermediary = api_client.post(
@@ -525,6 +533,7 @@ def test_search_without_specific_fields_from_box_archiving():
         "number": "123",
         "abbreviation": "a",
         "name": "a",
+        "year": 2020
     }
 
     response_abbreviation = api_client.post(
@@ -698,6 +707,7 @@ def test_get_year_by_abbreviation():
         "number": 1,
         "abbreviation": 'a',
         "name": "abc",
+        "year": 2020
     }
 
     response_box = api_client.post(
@@ -706,4 +716,28 @@ def test_get_year_by_abbreviation():
     assert response_box.status_code == 201
 
     response = api_client.get('/year-by-abbreviation/a')
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_get_number_by_year_and_abbreviation():
+    api_client = APIClient()
+
+    response = api_client.get('/number-by-year-abbrevation/a/2021')
+    assert response.status_code == 204
+
+    data_box = {
+        "number": 1,
+        "abbreviation": 'a',
+        "name": "abc",
+        "year": 2021
+    }
+
+    response_box = api_client.post(
+        '/box-abbreviation/', data=data_box,
+        header={"Content-Type": "application/json"})
+    assert response_box.status_code == 201
+
+    response = api_client.get('/number-by-year-abbrevation/a/2021')
     assert response.status_code == 200
