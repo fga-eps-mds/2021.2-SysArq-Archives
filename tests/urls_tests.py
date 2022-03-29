@@ -589,7 +589,7 @@ def test_search_without_specific_fields_from_admin_process():
     }
 
     response_subject = api_client.post(
-        '/document-subject/', data=data_subject,
+        '/document-name/', data=data_subject,
         header={"Content-Type": "application/json"})
     assert response_subject.status_code == 201
 
