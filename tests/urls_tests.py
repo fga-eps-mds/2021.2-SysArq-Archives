@@ -15,6 +15,8 @@ class TestBoxAbreviationsEndpoints:
         data = {
             "number": 8,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
 
         api_client = APIClient()
@@ -35,6 +37,8 @@ class TestBoxAbreviationsEndpoints:
         data2 = {
             "number": 8,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
 
         api_client = APIClient()
@@ -50,10 +54,14 @@ class TestBoxAbreviationsEndpoints:
         data3 = {
             "number": 8,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
         data4 = {
             "number": 9,
             "abbreviation": "",
+            "name": "",
+            "year": 2020
         }
         api_client = APIClient()
         intermediary = api_client.post(
@@ -67,7 +75,7 @@ class TestBoxAbreviationsEndpoints:
 
 
 @pytest.mark.django_db(transaction=False)
-class TestDocumentTypeEndpoints:
+class TestDocumentNameEndpoints:
 
     @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
     def test_create(self):
@@ -78,7 +86,7 @@ class TestDocumentTypeEndpoints:
 
         api_client = APIClient()
         response = api_client.post(
-            '/document-type/', data=data,
+            '/document-name/', data=data,
             header={"Content-Type": "application/json"})
         assert response.status_code == 201
 
@@ -86,7 +94,7 @@ class TestDocumentTypeEndpoints:
     def test_list(self):
 
         api_client = APIClient()
-        response = api_client.get('/document-type/')
+        response = api_client.get('/document-name/')
         assert response.status_code == 200
 
     @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -98,10 +106,10 @@ class TestDocumentTypeEndpoints:
 
         api_client = APIClient()
         intermediary = api_client.post(
-            '/document-type/', data=data2,
+            '/document-name/', data=data2,
             header={"Content-Type": "application/json"})
         assert intermediary.status_code == 201
-        response = api_client.get('/document-type/2/')
+        response = api_client.get('/document-name/2/')
         assert response.status_code == 200
 
     @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -116,11 +124,11 @@ class TestDocumentTypeEndpoints:
         }
         api_client = APIClient()
         intermediary = api_client.post(
-            '/document-type/', data=data3,
+            '/document-name/', data=data3,
             header={"Content-Type": "application/json"})
         assert intermediary.status_code == 201
         response = api_client.put(
-            '/document-type/3/', data=data4,
+            '/document-name/3/', data=data4,
             header={"Content-Type": "application/json"})
         assert response.status_code == 200
 
@@ -133,10 +141,10 @@ class TestDocumentTypeEndpoints:
 
         api_client = APIClient()
         intermediary = api_client.post(
-            '/document-type/', data=data5,
+            '/document-name/', data=data5,
             header={"Content-Type": "application/json"})
         assert intermediary.status_code == 201
-        response = api_client.delete('/document-type/4/')
+        response = api_client.delete('/document-name/4/')
         assert response.status_code == 204
 
 
@@ -341,15 +349,15 @@ def box_archiving():
         header={"Content-Type": "application/json"})
     assert response_sender.status_code == 201
 
-    data_type = {
+    data_name = {
         "document_name": "teste",
         "temporality": "1"
     }
 
-    response_type = api_client.post(
-        '/document-type/', data=data_type,
-        header={"Content-Type": "application/json"})
-    assert response_type.status_code == 201
+    response_name = api_client.post(
+        '/document-name/', data=data_name,
+        header={"Content-name": "application/json"})
+    assert response_name.status_code == 201
 
     data = {
         "origin_box_id":
@@ -363,9 +371,9 @@ def box_archiving():
                 }
             ]
         },
-        "document_types": [
+        "document_names": [
             {
-                "document_type_id": response_type.data['id'],
+                "document_name_id": response_name.data['id'],
                 "year": 2020,
                 "month": "01",
                 "temporality_date": 2030
@@ -525,6 +533,7 @@ def test_search_without_specific_fields_from_box_archiving():
         "number": "123",
         "abbreviation": "a",
         "name": "a",
+        "year": 2020
     }
 
     response_abbreviation = api_client.post(
@@ -580,7 +589,7 @@ def test_search_without_specific_fields_from_admin_process():
     }
 
     response_subject = api_client.post(
-        '/document-subject/', data=data_subject,
+        '/document-name/', data=data_subject,
         header={"Content-Type": "application/json"})
     assert response_subject.status_code == 201
 
@@ -640,15 +649,15 @@ def test_search_without_specific_fields_from_frequency_sheet():
 
     api_client = APIClient()
 
-    data_type = {
+    data_name = {
         "document_name": "name",
         "temporality": 2020
     }
 
-    response_type = api_client.post(
-        '/document-type/', data=data_type,
+    response_name = api_client.post(
+        '/document-name/', data=data_name,
         header={"Content-Type": "application/json"})
-    assert response_type.status_code == 201
+    assert response_name.status_code == 201
 
     data_pw = {
         "name": "person1",
@@ -670,11 +679,11 @@ def test_search_without_specific_fields_from_frequency_sheet():
         "reference_period": "2020-11-11",
         "notes": "1",
         "process_number": "1",
-        "document_type_id": None,
+        "document_name_id": None,
         "temporality_date": 2021
     }
 
-    data['document_type_id'] = response_type.data['id']
+    data['document_name_id'] = response_name.data['id']
     data['person_id'] = response_pw.data['id']
 
     response_sheet = api_client.post(
@@ -682,7 +691,7 @@ def test_search_without_specific_fields_from_frequency_sheet():
         format='json')
     assert response_sheet.status_code == 201
 
-    response = api_client.get('/search/?filter={"document_type_id":"name"}')
+    response = api_client.get('/search/?filter={"document_name_id":"name"}')
     assert response.status_code == 200
 
 
@@ -698,6 +707,7 @@ def test_get_year_by_abbreviation():
         "number": 1,
         "abbreviation": 'a',
         "name": "abc",
+        "year": 2020
     }
 
     response_box = api_client.post(
@@ -706,4 +716,28 @@ def test_get_year_by_abbreviation():
     assert response_box.status_code == 201
 
     response = api_client.get('/year-by-abbreviation/a')
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_get_number_by_year_and_abbreviation():
+    api_client = APIClient()
+
+    response = api_client.get('/number-by-year-abbrevation/a/2021')
+    assert response.status_code == 204
+
+    data_box = {
+        "number": 1,
+        "abbreviation": 'a',
+        "name": "abc",
+        "year": 2021
+    }
+
+    response_box = api_client.post(
+        '/box-abbreviation/', data=data_box,
+        header={"Content-Type": "application/json"})
+    assert response_box.status_code == 201
+
+    response = api_client.get('/number-by-year-abbrevation/a/2021')
     assert response.status_code == 200
