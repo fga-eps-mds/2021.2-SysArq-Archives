@@ -1,9 +1,14 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 
-class DocumentName(models.Model):
-    document_name = models.CharField(max_length=100, blank=True, null=True)
+
+class DocumentSubject(models.Model):
     subject_name = models.CharField(max_length=100, blank=True, null=True)
+    temporality = models.IntegerField(blank=True, null=True)
+
+
+class DocumentType(models.Model):
+    document_name = models.CharField(max_length=100, blank=True, null=True)
     temporality = models.IntegerField(blank=True, null=True)
 
 
@@ -23,10 +28,8 @@ class Unity(models.Model):
 
 
 class BoxAbbreviations(models.Model):
-    number = models.CharField(max_length=100, blank=True, null=True)
     abbreviation = models.CharField(max_length=20, blank=True, null=True)
     name = models.CharField(max_length=100, blank=True, null=True)
-    year = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(1900)])
 
 
 class Shelf(models.Model):
@@ -35,6 +38,9 @@ class Shelf(models.Model):
 
 class Rack(models.Model):
     number = models.IntegerField(validators=[MinValueValidator(0)])
+
+class FileLocation(models.Model):
+    file = models.CharField(max_length=100)
 
 
 class FrontCover(models.Model):

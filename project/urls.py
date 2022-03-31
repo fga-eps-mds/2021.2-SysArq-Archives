@@ -5,10 +5,12 @@ from archives_app import views
 
 router = routers.DefaultRouter()
 router.register(r'box-abbreviation', views.BoxAbbreviationViewSet)
-router.register(r'document-name', views.DocumentNameViewSet)
+router.register(r'document-subject', views.DocumentSubjectViewSet)
+router.register(r'document-type', views.DocumentTypeViewSet)
 router.register(r'unity', views.UnityViewSet)
 router.register(r'shelf', views.ShelfViewSet)
 router.register(r'rack', views.RackViewSet)
+router.register(r'file-location', views.LocationViewSet)
 router.register(r'front-cover', views.FrontCoverViewSet)
 router.register(r'administrative-process', views.AdministrativeProcessViewSet)
 router.register(r'frequency-relation', views.FrequencyRelationViewSet)

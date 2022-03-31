@@ -1,11 +1,20 @@
 from rest_framework import serializers
-from .fields_models import BoxAbbreviations, FrontCover
-from .fields_models import DocumentName, Shelf, Unity, Rack, PublicWorker
+from .fields_models import BoxAbbreviations, FrontCover, DocumentSubject
+from .fields_models import DocumentType, Shelf, Unity, Rack, PublicWorker, FileLocation
 
-class DocumentNameSerializer(serializers.ModelSerializer):
+
+class DocumentSubjectSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = DocumentName
+
+        model = DocumentSubject
+        fields = '__all__'
+
+
+class DocumentTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DocumentType
         fields = '__all__'
 
 
@@ -34,6 +43,13 @@ class RackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rack
+        fields = '__all__'
+
+
+class LocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FileLocation
         fields = '__all__'
 
 
