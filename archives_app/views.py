@@ -256,9 +256,6 @@ class SearchView(views.APIView):
             ):
                 if 'abbreviation_id' in list(filter_dict.keys())[0]:
                     contains = 'abbreviation_id__name__icontains'
-                elif 'subject_id' in list(filter_dict.keys())[0]:
-                    contains = '{}__subject_name__icontains'.format(
-                        list(filter_dict.keys())[0])
                 elif 'document_name_id' in list(filter_dict.keys())[0]:
                     contains = '{}__document_name__icontains'.format(
                         list(filter_dict.keys())[0])
