@@ -49,7 +49,6 @@ class BoxArchiving(Relation):
 
 
 class FrequencyRelation(Relation):
-    document_date = models.DateField()
     reference_period = ArrayField(models.DateField())
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
