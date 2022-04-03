@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from archives_app.fields_models import (BoxAbbreviations, DocumentType,
-                                        DocumentSubject, Shelf,
+from archives_app.fields_models import (BoxAbbreviations, DocumentName, Shelf,
                                         Unity, Rack, PublicWorker)
 from django.core.validators import MinValueValidator
 
@@ -28,8 +27,8 @@ class OriginBox(models.Model):
     subject = models.ManyToManyField(OriginBoxSubject)
 
 
-class DocumentTypes(models.Model):
-    document_type_id = models.ForeignKey(DocumentType, on_delete=models.PROTECT)
+class DocumentNames(models.Model):
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT)
     year = models.IntegerField(validators=[MinValueValidator(1900)])
     month = models.CharField(max_length=3, blank=True, null=True)
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)])
@@ -46,7 +45,7 @@ class BoxArchiving(Relation):
                                       blank=True, null=True)
     document_url = models.URLField(blank=True, null=True)
     cover_sheet = models.CharField(max_length=100, blank=True, null=True)
-    document_types = models.ManyToManyField(DocumentTypes)
+    document_names = models.ManyToManyField(DocumentNames)
 
 
 class FrequencyRelation(Relation):
@@ -54,7 +53,7 @@ class FrequencyRelation(Relation):
     reference_period = ArrayField(models.DateField())
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
-    document_type_id = models.ForeignKey(DocumentType, on_delete=models.PROTECT,
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
                                          blank=True, null=True)
 
 
@@ -67,7 +66,7 @@ class FrequencySheet(models.Model):
     workplace = models.CharField(max_length=100)
     municipal_area = models.CharField(max_length=100)
     reference_period = models.DateField()
-    document_type_id = models.ForeignKey(DocumentType, on_delete=models.PROTECT,
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
                                          blank=True, null=True)
     notes = models.CharField(max_length=300, blank=True, null=True)
     process_number = models.CharField(max_length=20, blank=True, null=True)
@@ -79,7 +78,7 @@ class AdministrativeProcess(Document):
     notice_date = models.DateField()
     interested = models.CharField(max_length=150)
     cpf_cnpj = models.CharField(max_length=15, blank=True, null=True)
-    subject_id = models.ForeignKey(DocumentSubject, on_delete=models.PROTECT)
+  #  subject_id = models.ForeignKey(DocumentSubject, on_delete=models.PROTECT)
     dest_unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
                                       null=True, related_name='unity')
     reference_month_year = models.DateField(blank=True, null=True)
