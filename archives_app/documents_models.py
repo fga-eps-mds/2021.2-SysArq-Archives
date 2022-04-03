@@ -49,11 +49,18 @@ class BoxArchiving(Relation):
 
 
 class FrequencyRelation(Relation):
-    reference_period = ArrayField(models.DateField())
+    document_date = models.DateField()
+    reference_period = ArrayField(models.CharField(max_length=8))
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
     document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
                                          blank=True, null=True)
+    sender_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
+                                  blank=True, null=True)
+    sender_cpf = models.CharField(max_length=11)
+    receiver_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
+                                  blank=True, null=True)
+    receiver_cpf = models.CharField(max_length=11)
 
 
 class FrequencySheet(models.Model):
