@@ -117,7 +117,6 @@ class FrequencyRelationSerializer(FrequencySupport):
             "receiver_name",
             "process_number",
             "notes",
-            "document_date",
             "received_date",
             "temporality_date",
             "reference_period",
