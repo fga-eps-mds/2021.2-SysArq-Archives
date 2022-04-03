@@ -649,6 +649,16 @@ def test_search_without_specific_fields_from_frequency_sheet():
 
     api_client = APIClient()
 
+    data_unity = {
+        "unity_name": "unity1",
+        "unity_abbreviation": "u1",
+        "administrative_bond": "a",
+        "bond_abbreviation": "a",
+        "municipality": "test",
+        "telephone_number": "a",
+        "notes": "1"
+    }
+
     data_name = {
         "document_name": "name",
         "temporality": 2020
@@ -658,6 +668,11 @@ def test_search_without_specific_fields_from_frequency_sheet():
         '/document-name/', data=data_name,
         header={"Content-Type": "application/json"})
     assert response_name.status_code == 201
+
+    response_unity = api_client.post(
+        '/unity/', data=data_unity,
+        header={"Content-Type": "application/json"})
+    assert response_unity.status_code == 201
 
     data_pw = {
         "name": "person1",
@@ -674,7 +689,7 @@ def test_search_without_specific_fields_from_frequency_sheet():
         "cpf": "1",
         "role": "1",
         "category": "1",
-        "workplace": "1",
+        "workplace": None,
         "municipal_area": "1",
         "reference_period": "2020-11-11",
         "notes": "1",
@@ -683,6 +698,7 @@ def test_search_without_specific_fields_from_frequency_sheet():
         "temporality_date": 2021
     }
 
+    data['workplace'] = response_unity.data['id']
     data['document_name_id'] = response_name.data['id']
     data['person_id'] = response_pw.data['id']
 
