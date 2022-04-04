@@ -68,7 +68,7 @@ class FrequencySheet(models.Model):
     cpf = models.CharField(max_length=11)
     role = models.CharField(max_length=100)
     category = models.CharField(max_length=100, blank=True, null=True)
-    workplace = models.CharField(max_length=100)
+    workplace = models.ForeignKey(on_delete=models.PROTECT, to='archives_app.unity')
     municipal_area = models.CharField(max_length=100)
     reference_period = models.DateField()
     document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,

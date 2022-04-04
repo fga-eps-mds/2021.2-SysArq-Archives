@@ -199,10 +199,16 @@ class FrequencySheetSerializer(FrequencySupport):
             return obj.person_id.name
         return ""
 
+    def get_workplace(self, obj):
+        if obj.workplace is not None:
+            return obj.workplace.unity_name
+        return ""
+
     document_name_name = serializers.SerializerMethodField(
         'get_document_name'
     )
     person_name = serializers.SerializerMethodField('get_person_name')
+    workplace_name = serializers.SerializerMethodField('get_workplace')
 
     class Meta:
         model = FrequencySheet
@@ -213,6 +219,7 @@ class FrequencySheetSerializer(FrequencySupport):
                   "role",
                   "category",
                   "workplace",
+                  "workplace_name",
                   "municipal_area",
                   "reference_period",
                   "notes",

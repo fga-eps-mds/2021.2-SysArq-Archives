@@ -122,7 +122,6 @@ class Migration(migrations.Migration):
                 ('cpf', models.CharField(max_length=11)),
                 ('role', models.CharField(max_length=100)),
                 ('category', models.CharField(blank=True, max_length=100, null=True)),
-                ('workplace', models.CharField(max_length=100)),
                 ('municipal_area', models.CharField(max_length=100)),
                 ('reference_period', models.DateField()),
                 ('notes', models.CharField(blank=True, max_length=300, null=True)),
@@ -130,6 +129,7 @@ class Migration(migrations.Migration):
                 ('temporality_date', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1900)])),
                 ('document_name_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.documentname')),
                 ('person_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.publicworker')),
+                ('workplace', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='archives_app.unity')),
             ],
         ),
         migrations.CreateModel(
