@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from archives_app.fields_models import (BoxAbbreviations, DocumentName, Shelf,
-                                        Unity, Rack, PublicWorker)
+                                        Unity, Rack, PublicWorker, FileLocation)
 from django.core.validators import MinValueValidator
 
 
@@ -18,13 +18,8 @@ class Relation(Document):
 
 class OriginBoxSubject(models.Model):
     name = models.CharField(max_length=100)
-    dates = ArrayField(models.DateField())
-
-
-class OriginBox(models.Model):
-    number = models.CharField(max_length=20)
-    year = models.IntegerField(validators=[MinValueValidator(1900)])
-    subject = models.ManyToManyField(OriginBoxSubject)
+    year = ArrayField(models.IntegerField(validators=[MinValueValidator(1900)]))
+    month = ArrayField(models.CharField(max_length=3, blank=True, null=True))
 
 
 class DocumentNames(models.Model):
@@ -34,18 +29,27 @@ class DocumentNames(models.Model):
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)])
 
 
-class BoxArchiving(Relation):
-    abbreviation_id = models.ForeignKey(BoxAbbreviations, on_delete=models.PROTECT,
-                                        blank=True, null=True)
+class OriginBox(models.Model):
+    number = models.CharField(max_length=20)
+    year = models.IntegerField(validators=[MinValueValidator(1900)])
+    subject = models.ManyToManyField(OriginBoxSubject)
     shelf_id = models.ForeignKey(Shelf, on_delete=models.PROTECT, blank=True,
                                  null=True)
     rack_id = models.ForeignKey(Rack, on_delete=models.PROTECT, blank=True,
                                 null=True)
+    file_location_id = models.ForeignKey(FileLocation, on_delete=models.PROTECT,
+                                         blank=True, null=True)
+    document_names = models.ManyToManyField(DocumentNames)
+    notes = models.CharField(max_length=300, blank=True, null=True)
+
+
+class BoxArchiving(Relation):
+    abbreviation_id = models.ForeignKey(BoxAbbreviations, on_delete=models.PROTECT,
+                                        blank=True, null=True)
     origin_box_id = models.ForeignKey(OriginBox, on_delete=models.PROTECT,
                                       blank=True, null=True)
     document_url = models.URLField(blank=True, null=True)
     cover_sheet = models.CharField(max_length=100, blank=True, null=True)
-    document_names = models.ManyToManyField(DocumentNames)
 
 
 class FrequencyRelation(Relation):
