@@ -55,10 +55,10 @@ class FrequencyRelation(Relation):
     document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
                                          blank=True, null=True)
     sender_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
-                                  blank=True, null=True)
+                                  blank=True, null=True, related_name='sender_publicworker')
     sender_cpf = models.CharField(max_length=11)
     receiver_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
-                                  blank=True, null=True)
+                                  blank=True, null=True, related_name='receiver_publicworker')
     receiver_cpf = models.CharField(max_length=11)
 
 
