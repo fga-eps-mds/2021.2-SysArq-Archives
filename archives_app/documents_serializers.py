@@ -87,19 +87,36 @@ class FrequencyRelationSerializer(FrequencySupport):
         if obj.sender_unity is not None:
             return obj.sender_unity.unity_name
         return ""
+    
+    def get_sender_name(self, obj):
+        if obj.sender_id is not None:
+            return obj.sender_id.name
+        return ""
+
+    def get_receiver_name(self, obj):
+        if obj.receiver_id is not None:
+            return obj.receiver_id.name
+        return ""
 
     document_name_name = serializers.SerializerMethodField(
         'get_document_name'
     )
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
+    sender_name = serializers.SerializerMethodField('get_sender_name')
+    receiver_name = serializers.SerializerMethodField('get_receiver_name')
 
     class Meta:
         model = FrequencyRelation
         fields = (
             "id",
+            "sender_id",
+            "sender_cpf",
+            "sender_name",
+            "receiver_id",
+            "receiver_cpf",
+            "receiver_name",
             "process_number",
             "notes",
-            "document_date",
             "received_date",
             "temporality_date",
             "reference_period",
