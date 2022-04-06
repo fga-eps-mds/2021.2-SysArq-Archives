@@ -39,13 +39,10 @@ class OriginBox(models.Model):
                                 null=True)
     file_location_id = models.ForeignKey(FileLocation, on_delete=models.PROTECT,
                                          blank=True, null=True)
-    document_names = models.ManyToManyField(DocumentNames)
-    notes = models.CharField(max_length=300, blank=True, null=True)
+    box_notes = models.CharField(max_length=300, blank=True, null=True)
 
 
 class BoxArchiving(Relation):
-    abbreviation_id = models.ForeignKey(BoxAbbreviations, on_delete=models.PROTECT,
-                                        blank=True, null=True)
     origin_box_id = models.ForeignKey(OriginBox, on_delete=models.PROTECT,
                                       blank=True, null=True)
     document_url = models.URLField(blank=True, null=True)
