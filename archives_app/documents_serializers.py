@@ -159,7 +159,6 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "filer_user",
                   "notice_date",
                   "interested",
-                  "cpf_cnpj",
                   "reference_month_year",
                   "sender_user",
                   "sender_user_name",
@@ -171,7 +170,7 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "administrative_process_number",
                   "sender_unity",
               #   "subject_id",
-                  "dest_unity_id",
+                  "document_name_id",
                   "unity_id",
               #   "document_subject_name",
                   "sender_unity_name"
