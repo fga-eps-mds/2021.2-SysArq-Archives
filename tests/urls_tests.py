@@ -75,7 +75,7 @@ class TestBoxAbreviationsEndpoints:
 
 
 @pytest.mark.django_db(transaction=False)
-class TestDocumentTypeEndpoints:
+class TestDocumentNameEndpoints:
 
     @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
     def test_create(self):
@@ -86,7 +86,7 @@ class TestDocumentTypeEndpoints:
 
         api_client = APIClient()
         response = api_client.post(
-            '/document-type/', data=data,
+            '/document-name/', data=data,
             header={"Content-Type": "application/json"})
         assert response.status_code == 201
 
@@ -94,7 +94,7 @@ class TestDocumentTypeEndpoints:
     def test_list(self):
 
         api_client = APIClient()
-        response = api_client.get('/document-type/')
+        response = api_client.get('/document-name/')
         assert response.status_code == 200
 
     @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -106,10 +106,10 @@ class TestDocumentTypeEndpoints:
 
         api_client = APIClient()
         intermediary = api_client.post(
-            '/document-type/', data=data2,
+            '/document-name/', data=data2,
             header={"Content-Type": "application/json"})
         assert intermediary.status_code == 201
-        response = api_client.get('/document-type/2/')
+        response = api_client.get('/document-name/2/')
         assert response.status_code == 200
 
     @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -124,11 +124,11 @@ class TestDocumentTypeEndpoints:
         }
         api_client = APIClient()
         intermediary = api_client.post(
-            '/document-type/', data=data3,
+            '/document-name/', data=data3,
             header={"Content-Type": "application/json"})
         assert intermediary.status_code == 201
         response = api_client.put(
-            '/document-type/3/', data=data4,
+            '/document-name/3/', data=data4,
             header={"Content-Type": "application/json"})
         assert response.status_code == 200
 
@@ -141,10 +141,10 @@ class TestDocumentTypeEndpoints:
 
         api_client = APIClient()
         intermediary = api_client.post(
-            '/document-type/', data=data5,
+            '/document-name/', data=data5,
             header={"Content-Type": "application/json"})
         assert intermediary.status_code == 201
-        response = api_client.delete('/document-type/4/')
+        response = api_client.delete('/document-name/4/')
         assert response.status_code == 204
 
 
@@ -349,15 +349,15 @@ def box_archiving():
         header={"Content-Type": "application/json"})
     assert response_sender.status_code == 201
 
-    data_type = {
+    data_name = {
         "document_name": "teste",
         "temporality": "1"
     }
 
-    response_type = api_client.post(
-        '/document-type/', data=data_type,
-        header={"Content-Type": "application/json"})
-    assert response_type.status_code == 201
+    response_name = api_client.post(
+        '/document-name/', data=data_name,
+        header={"Content-name": "application/json"})
+    assert response_name.status_code == 201
 
     data = {
         "origin_box_id":
@@ -371,9 +371,9 @@ def box_archiving():
                 }
             ]
         },
-        "document_types": [
+        "document_names": [
             {
-                "document_type_id": response_type.data['id'],
+                "document_name_id": response_name.data['id'],
                 "year": 2020,
                 "month": "01",
                 "temporality_date": 2030
@@ -583,15 +583,15 @@ def test_search_without_specific_fields_from_admin_process():
 
     api_client = APIClient()
 
-    data_subject = {
-        "subject_name": "name",
+    data_document_name= {
+        "document_name": "name",
         "temporality": 2020
     }
 
-    response_subject = api_client.post(
-        '/document-subject/', data=data_subject,
+    response_document_name = api_client.post(
+        '/document-name/', data=data_document_name,
         header={"Content-Type": "application/json"})
-    assert response_subject.status_code == 201
+    assert response_document_name.status_code == 201
 
     data_unity = {
         "unity_name": "unity1",
@@ -614,7 +614,6 @@ def test_search_without_specific_fields_from_admin_process():
         "filer_user": "1",
         "notice_date": "2020-11-11",
         "interested": "1",
-        "cpf_cnpj": "11111111111",
         "reference_month_year": "2020-11-11",
         "sender_user": None,
         "archiving_date": "2020-11-11",
@@ -623,23 +622,19 @@ def test_search_without_specific_fields_from_admin_process():
         "temporality_date": 2021,
         "send_date": "2021-11-11",
         "administrative_process_number": "1",
-        "sender_unity": None,
-        "subject_id": None,
-        "dest_unity_id": None,
-        "unity_id": None
+        "document_name_id": None,
+        "sender_unity": None
     }
 
-    data['subject_id'] = response_subject.data['id']
+    data['document_name_id'] = response_document_name.data['id']
     data['sender_unity'] = response_unity.data['id']
-    data['dest_unity_id'] = response_unity.data['id']
-    data['unity_id'] = response_unity.data['id']
 
     response_admin = api_client.post(
         '/administrative-process/', data=data,
         format='json')
     assert response_admin.status_code == 201
 
-    response = api_client.get('/search/?filter={"subject_id":"unity1"}')
+    response = api_client.get('/search/?filter={"document_name_id":1}')
     assert response.status_code == 200
 
 
@@ -649,15 +644,30 @@ def test_search_without_specific_fields_from_frequency_sheet():
 
     api_client = APIClient()
 
-    data_type = {
+    data_unity = {
+        "unity_name": "unity1",
+        "unity_abbreviation": "u1",
+        "administrative_bond": "a",
+        "bond_abbreviation": "a",
+        "municipality": "test",
+        "telephone_number": "a",
+        "notes": "1"
+    }
+
+    data_name = {
         "document_name": "name",
         "temporality": 2020
     }
 
-    response_type = api_client.post(
-        '/document-type/', data=data_type,
+    response_name = api_client.post(
+        '/document-name/', data=data_name,
         header={"Content-Type": "application/json"})
-    assert response_type.status_code == 201
+    assert response_name.status_code == 201
+
+    response_unity = api_client.post(
+        '/unity/', data=data_unity,
+        header={"Content-Type": "application/json"})
+    assert response_unity.status_code == 201
 
     data_pw = {
         "name": "person1",
@@ -674,16 +684,17 @@ def test_search_without_specific_fields_from_frequency_sheet():
         "cpf": "1",
         "role": "1",
         "category": "1",
-        "workplace": "1",
+        "workplace": None,
         "municipal_area": "1",
         "reference_period": "2020-11-11",
         "notes": "1",
         "process_number": "1",
-        "document_type_id": None,
+        "document_name_id": None,
         "temporality_date": 2021
     }
 
-    data['document_type_id'] = response_type.data['id']
+    data['workplace'] = response_unity.data['id']
+    data['document_name_id'] = response_name.data['id']
     data['person_id'] = response_pw.data['id']
 
     response_sheet = api_client.post(
@@ -691,7 +702,7 @@ def test_search_without_specific_fields_from_frequency_sheet():
         format='json')
     assert response_sheet.status_code == 201
 
-    response = api_client.get('/search/?filter={"document_type_id":"name"}')
+    response = api_client.get('/search/?filter={"document_name_id":"name"}')
     assert response.status_code == 200
 
 

@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from archives_app.documents_models import (FrequencyRelation, BoxArchiving,
                                            AdministrativeProcess, OriginBox,
-                                           FrequencySheet, DocumentTypes)
+                                           FrequencySheet, DocumentNames)
 
 
 class FrequencySupport(serializers.ModelSerializer):
-    def get_document_type(self, obj):
-        if obj.document_type_id is not None:
-            return obj.document_type_id.document_name
+    def get_document_name(self, obj):
+        if obj.document_name_id is not None:
+            return obj.document_name_id.document_name
         return None
 
 
@@ -33,27 +33,27 @@ class BoxArchivingSerializer(serializers.ModelSerializer):
             return obj.sender_unity.unity_name
         return ""
 
-    def get_doc_types(self, obj):
-        if obj.document_types is not None:
-            doc_types = []
-            for obj in obj.document_types.all():
-                doc_types.append(obj.document_type_id.document_name)
-            return doc_types
+    def get_doc_names(self, obj):
+        if obj.document_names is not None:
+            doc_names = []
+            for obj in obj.document_names.all():
+                doc_names.append(obj.document_name_id.document_name)
+            return doc_names
         return ""
 
     def get_temporalities(self, obj):
-        if obj.document_types is not None:
-            doc_types = []
-            for obj in obj.document_types.all():
-                doc_types.append(obj.temporality_date)
-            return doc_types
+        if obj.document_names is not None:
+            doc_names = []
+            for obj in obj.document_names.all():
+                doc_names.append(obj.temporality_date)
+            return doc_names
         return None
 
     shelf_number = serializers.SerializerMethodField('get_shelf_number')
     rack_number = serializers.SerializerMethodField('get_rack_number')
     abbreviation_name = serializers.SerializerMethodField('get_abbreviation_name')
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
-    document_type_name = serializers.SerializerMethodField('get_doc_types')
+    document_name_name = serializers.SerializerMethodField('get_doc_names')
     temporality_date = serializers.SerializerMethodField('get_temporalities')
 
     class Meta:
@@ -74,9 +74,9 @@ class BoxArchivingSerializer(serializers.ModelSerializer):
             "abbreviation_id",
             "shelf_id",
             "rack_id",
-            "document_types",
+            "document_names",
             "sender_unity_name",
-            "document_type_name",
+            "document_name_name",
             "temporality_date"
         )
 
@@ -87,36 +87,53 @@ class FrequencyRelationSerializer(FrequencySupport):
         if obj.sender_unity is not None:
             return obj.sender_unity.unity_name
         return ""
+    
+    def get_sender_name(self, obj):
+        if obj.sender_id is not None:
+            return obj.sender_id.name
+        return ""
 
-    document_type_name = serializers.SerializerMethodField(
-        'get_document_type'
+    def get_receiver_name(self, obj):
+        if obj.receiver_id is not None:
+            return obj.receiver_id.name
+        return ""
+
+    document_name_name = serializers.SerializerMethodField(
+        'get_document_name'
     )
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
+    sender_name = serializers.SerializerMethodField('get_sender_name')
+    receiver_name = serializers.SerializerMethodField('get_receiver_name')
 
     class Meta:
         model = FrequencyRelation
         fields = (
             "id",
+            "sender_id",
+            "sender_cpf",
+            "sender_name",
+            "receiver_id",
+            "receiver_cpf",
+            "receiver_name",
             "process_number",
             "notes",
-            "document_date",
             "received_date",
             "temporality_date",
             "reference_period",
             "filer_user",
             "sender_unity",
-            "document_type_id",
-            "document_type_name",
+            "document_name_id",
+            "document_name_name",
             "sender_unity_name"
         )
 
 
 class AdministrativeProcessSerializer(serializers.ModelSerializer):
 
-    def get_document_subject(self, obj):
-        if obj.subject_id is not None:
-            return obj.subject_id.subject_name
-        return None
+  # def get_document_subject(self, obj):
+  #      if obj.subject_id is not None:
+  #         return obj.subject_id.subject_name
+  #      return None
 
     def get_sender_unity(self, obj):
         if obj.sender_unity is not None:
@@ -130,9 +147,9 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
 
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
     sender_user_name = serializers.SerializerMethodField('get_sender_user')
-    document_subject_name = serializers.SerializerMethodField(
-        'get_document_subject'
-    )
+  #  document_subject_name = serializers.SerializerMethodField(
+  #      'get_document_subject'
+  #  )
 
     class Meta:
         model = AdministrativeProcess
@@ -142,7 +159,6 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "filer_user",
                   "notice_date",
                   "interested",
-                  "cpf_cnpj",
                   "reference_month_year",
                   "sender_user",
                   "sender_user_name",
@@ -153,10 +169,10 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "send_date",
                   "administrative_process_number",
                   "sender_unity",
-                  "subject_id",
-                  "dest_unity_id",
+              #   "subject_id",
+                  "document_name_id",
                   "unity_id",
-                  "document_subject_name",
+              #   "document_subject_name",
                   "sender_unity_name"
                   )
 
@@ -168,10 +184,10 @@ class OriginBoxSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DocumentTypesSerializer(serializers.ModelSerializer):
+class DocumentNamesSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = DocumentTypes
+        model = DocumentNames
         fields = '__all__'
 
 
@@ -182,10 +198,16 @@ class FrequencySheetSerializer(FrequencySupport):
             return obj.person_id.name
         return ""
 
-    document_type_name = serializers.SerializerMethodField(
-        'get_document_type'
+    def get_workplace(self, obj):
+        if obj.workplace is not None:
+            return obj.workplace.unity_name
+        return ""
+
+    document_name_name = serializers.SerializerMethodField(
+        'get_document_name'
     )
     person_name = serializers.SerializerMethodField('get_person_name')
+    workplace_name = serializers.SerializerMethodField('get_workplace')
 
     class Meta:
         model = FrequencySheet
@@ -196,11 +218,12 @@ class FrequencySheetSerializer(FrequencySupport):
                   "role",
                   "category",
                   "workplace",
+                  "workplace_name",
                   "municipal_area",
                   "reference_period",
                   "notes",
                   "process_number",
-                  "document_type_id",
+                  "document_name_id",
                   "temporality_date",
-                  "document_type_name"
+                  "document_name_name"
                   )
