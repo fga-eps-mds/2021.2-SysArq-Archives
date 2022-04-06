@@ -583,15 +583,15 @@ def test_search_without_specific_fields_from_admin_process():
 
     api_client = APIClient()
 
-    data_subject = {
-        "subject_name": "name",
+    data_document_name= {
+        "document_name": "name",
         "temporality": 2020
     }
 
-    response_subject = api_client.post(
-        '/document-name/', data=data_subject,
+    response_document_name = api_client.post(
+        '/document-name/', data=data_document_name,
         header={"Content-Type": "application/json"})
-    assert response_subject.status_code == 201
+    assert response_document_name.status_code == 201
 
     data_unity = {
         "unity_name": "unity1",
@@ -614,7 +614,6 @@ def test_search_without_specific_fields_from_admin_process():
         "filer_user": "1",
         "notice_date": "2020-11-11",
         "interested": "1",
-        "cpf_cnpj": "11111111111",
         "reference_month_year": "2020-11-11",
         "sender_user": None,
         "archiving_date": "2020-11-11",
@@ -623,23 +622,19 @@ def test_search_without_specific_fields_from_admin_process():
         "temporality_date": 2021,
         "send_date": "2021-11-11",
         "administrative_process_number": "1",
-        "sender_unity": None,
-        "subject_id": None,
-        "dest_unity_id": None,
-        "unity_id": None
+        "document_name_id": None,
+        "sender_unity": None
     }
 
-    data['subject_id'] = response_subject.data['id']
+    data['document_name_id'] = response_document_name.data['id']
     data['sender_unity'] = response_unity.data['id']
-    data['dest_unity_id'] = response_unity.data['id']
-    data['unity_id'] = response_unity.data['id']
 
     response_admin = api_client.post(
         '/administrative-process/', data=data,
         format='json')
     assert response_admin.status_code == 201
 
-    response = api_client.get('/search/?filter={"subject_id":"unity1"}')
+    response = api_client.get('/search/?filter={"document_name_id":1}')
     assert response.status_code == 200
 
 

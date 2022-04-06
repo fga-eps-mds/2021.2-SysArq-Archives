@@ -82,10 +82,8 @@ class FrequencySheet(models.Model):
 class AdministrativeProcess(Document):
     notice_date = models.DateField()
     interested = models.CharField(max_length=150)
-    cpf_cnpj = models.CharField(max_length=15, blank=True, null=True)
-  #  subject_id = models.ForeignKey(DocumentSubject, on_delete=models.PROTECT)
-    dest_unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
-                                      null=True, related_name='unity')
+    document_name_id= models.ForeignKey(DocumentName, on_delete=models.PROTECT,
+                                    blank=True, null=True)
     reference_month_year = models.DateField(blank=True, null=True)
     sender_user = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
                                     blank=True, null=True)
