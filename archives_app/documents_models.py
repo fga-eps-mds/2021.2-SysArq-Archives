@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from archives_app.fields_models import (BoxAbbreviations, DocumentName, Shelf,
-                                        Unity, Rack, PublicWorker)
+                                        Unity, Rack, PublicWorker, FileLocation)
 from django.core.validators import MinValueValidator
 
 
@@ -96,3 +96,9 @@ class AdministrativeProcess(Document):
                                  null=True, related_name='unfiled_unity')
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
+    shelf_id = models.ForeignKey(Shelf, on_delete=models.PROTECT, blank=True,
+                                        null=True)
+    rack_id = models.ForeignKey(Rack, on_delete=models.PROTECT, blank=True,
+                                    null=True)
+    file_location_id = models.ForeignKey(FileLocation, models.PROTECT, blank=True,
+                                            null=True)
