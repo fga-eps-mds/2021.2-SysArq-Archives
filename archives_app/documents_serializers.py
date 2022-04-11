@@ -12,58 +12,13 @@ class FrequencySupport(serializers.ModelSerializer):
 
 
 class BoxArchivingSerializer(serializers.ModelSerializer):
-
-    def get_shelf_number(self, obj):
-        if obj.origin_box_id is not None:
-            origin_boxes_shelves = []
-            for obj in obj.origin_box_id.all():
-                origin_boxes_shelves.append(obj.origin_box_id.shelf_id.number)
-            return origin_boxes_shelves
-        return None
-
-    def get_rack_number(self, obj):
-        if obj.origin_box_id is not None:
-            origin_boxes_racks = []
-            for obj in obj.origin_box_id.all():
-                origin_boxes_racks.append(obj.origin_box_id.rack_id.number)
-            return origin_boxes_racks
-        return None
-
-    def get_file_location(self, obj):
-        if obj.origin_box_id is not None:
-            origin_boxes_location = []
-            for obj in obj.origin_box_id.all():
-                origin_boxes_location.append(obj.origin_box_id.file_location_id.file)
-            return origin_boxes_location
-        return None
-
+    
     def get_sender_unity(self, obj):
         if obj.sender_unity is not None:
             return obj.sender_unity.unity_name
         return ""
 
-    def get_doc_names(self, obj):
-        if obj.document_names is not None:
-            doc_names = []
-            for obj in obj.document_names.all():
-                doc_names.append(obj.document_name_id.document_name)
-            return doc_names
-        return ""
-
-    def get_temporalities(self, obj):
-        if obj.document_names is not None:
-            doc_names = []
-            for obj in obj.document_names.all():
-                doc_names.append(obj.temporality_date)
-            return doc_names
-        return None
-
-    shelf_number = serializers.SerializerMethodField('get_shelf_number')
-    rack_number = serializers.SerializerMethodField('get_rack_number')
-    file_location = serializers.SerializerMethodField('get_file_location')
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
-    document_name_name = serializers.SerializerMethodField('get_doc_names')
-    temporality_date = serializers.SerializerMethodField('get_temporalities')
 
     class Meta:
         model = BoxArchiving
@@ -76,18 +31,8 @@ class BoxArchivingSerializer(serializers.ModelSerializer):
             "document_url",
             "cover_sheet",
             "filer_user",
-            "abbreviation_name",
-            "shelf_number",
-            "rack_number",
-            "origin_box_id",
-            "shelf_id",
-            "rack_id",
-            "file_location_id",
-            "document_names",
-            "sender_unity_name",
-            "document_name_name",
-            "temporality_date",
-            "box_notes"
+            "origin_boxes",
+            "sender_unity_name"
         )
 
 
@@ -172,6 +117,25 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
 
 
 class OriginBoxSerializer(serializers.ModelSerializer):
+
+    def get_shelf_number(self, obj):
+        if obj.shelf_id is not None:
+            return obj.shelf_id.number
+        return None
+
+    def get_rack_number(self, obj):
+        if obj.rack_id is not None:
+            return obj.rack_id.number
+        return None
+
+    def get_file_location(self, obj):
+        if obj.abbreviation_id is not None:
+            return obj.file_location_id.file
+        return ""
+
+    shelf_number = serializers.SerializerMethodField('get_shelf_number')
+    rack_number = serializers.SerializerMethodField('get_rack_number')
+    file_location = serializers.SerializerMethodField('get_file_location')
 
     class Meta:
         model = OriginBox

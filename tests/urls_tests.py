@@ -347,6 +347,7 @@ def box_archiving():
     response_sender = api_client.post(
         '/unity/', data=data_sender,
         header={"Content-Type": "application/json"})
+
     assert response_sender.status_code == 201
 
     data_name = {
@@ -360,24 +361,22 @@ def box_archiving():
     assert response_name.status_code == 201
 
     data = {
-        "origin_box_id":
-        {
-            "number": "1",
-            "year": 2020,
-            "subjects_list": [
-                {
-                    "name": "teste",
-                    "dates": ["2020-11-11"]
-                }
-            ]
-        },
-        "document_names": [
+        "origin_boxes": [
             {
-                "document_name_id": response_name.data['id'],
+                "number": "1",
                 "year": 2020,
-                "month": "01",
-                "temporality_date": 2030
-            }
+                "rack_id": "",
+                "shelf_id": "",
+                "file_location_id": "",
+                "box_notes": "",
+                "subjects_list": [
+                    {
+                        "document_name_id": response_name.data['id'],
+                        "year": ["2020"],
+                        "month": ["11"],
+                    }
+                ]
+            },
         ],
         "process_number": "1",
         "sender_unity": response_sender.data['id'],
@@ -386,9 +385,6 @@ def box_archiving():
         "document_url": "https://www.t.com/",
         "cover_sheet": "1",
         "filer_user": "1",
-        "abbreviation_id": "",
-        "shelf_id": "",
-        "rack_id": ""
     }
 
     return data
