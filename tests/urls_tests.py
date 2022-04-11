@@ -502,6 +502,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['shelf_id'] = response_shelf.data['id']
 
+    data["process_number"] = "1"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -521,6 +522,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['rack_id'] = response_rack.data['id']
 
+    data["process_number"] = "2"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -536,6 +538,7 @@ def test_search_without_specific_fields_from_box_archiving():
         "year": 2020
     }
 
+    data["process_number"] = "3"
     response_abbreviation = api_client.post(
         '/box-abbreviation/', data=data_abbreviation,
         header={"Content-Type": "application/json"})
@@ -543,6 +546,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['abbreviation_id'] = response_abbreviation.data['id']
 
+    data["process_number"] = "4"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -567,7 +571,8 @@ def test_search_without_specific_fields_from_box_archiving():
     assert response_unity.status_code == 201
 
     data['sender_unity'] = response_unity.data['id']
-
+    
+    data["process_number"] = "5"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
