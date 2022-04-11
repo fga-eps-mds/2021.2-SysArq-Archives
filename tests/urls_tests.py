@@ -619,8 +619,14 @@ def test_search_without_specific_fields_from_admin_process():
     assert response_rack.status_code == 201
 
     response_file_location = api_client.post(
-        '/file-location/', data={'file': 'BSB'})
+        '/file-location/', data={'file': 'BSB'},
+        header={"Content-Type": "application/json"})
     assert response_file_location.status_code == 201
+
+    response_box_abbreviation = api_client.post(
+        '/box-abbreviation/', data={'abbreviation': 'CH20'},
+        header={"Content-Type": "application/json"})
+    assert response_box_abbreviation.status_code == 201
 
     data = {
         "process_number": "12345",
@@ -641,6 +647,7 @@ def test_search_without_specific_fields_from_admin_process():
         "shelf_id": None,
         "rack_id": None,
         "file_location_id": None,
+        "box_abbreviation_id": None,
     }
 
     data['document_name_id'] = response_document_name.data['id']
@@ -648,6 +655,7 @@ def test_search_without_specific_fields_from_admin_process():
     data['shelf_id'] = response_shelf.data['id']
     data['rack_id'] = response_rack.data['id']
     data['file_location_id'] = response_file_location.data['id']
+    data['box_abbreviation_id'] = response_box_abbreviation.data['id']
 
     response_admin = api_client.post(
         '/administrative-process/', data=data,

@@ -102,3 +102,5 @@ class AdministrativeProcess(Document):
                                     null=True)
     file_location_id = models.ForeignKey(FileLocation, models.PROTECT, blank=True,
                                             null=True)
+    box_abbreviation_id = models.ForeignKey(BoxAbbreviations, models.PROTECT, blank=True,
+                                                null=True)
