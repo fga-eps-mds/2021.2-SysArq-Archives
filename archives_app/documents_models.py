@@ -17,7 +17,8 @@ class Relation(Document):
 
 
 class OriginBoxSubject(models.Model):
-    name = models.CharField(max_length=100)
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
+                                         blank=True, null=True)
     year = ArrayField(models.IntegerField(validators=[MinValueValidator(1900)]))
     month = ArrayField(models.CharField(max_length=3, blank=True, null=True))
 
@@ -29,7 +30,14 @@ class DocumentNames(models.Model):
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)])
 
 
+class BoxArchiving(Relation):
+    document_url = models.URLField(blank=True, null=True)
+    cover_sheet = models.CharField(max_length=100, blank=True, null=True)
+
+
 class OriginBox(models.Model):
+    box_archiving_id = models.ForeignKey(BoxArchiving, on_delete=models.PROTECT,
+                                         blank=True, null=True)
     number = models.CharField(max_length=20)
     year = models.IntegerField(validators=[MinValueValidator(1900)])
     subject = models.ManyToManyField(OriginBoxSubject)
@@ -40,13 +48,6 @@ class OriginBox(models.Model):
     file_location_id = models.ForeignKey(FileLocation, on_delete=models.PROTECT,
                                          blank=True, null=True)
     box_notes = models.CharField(max_length=300, blank=True, null=True)
-
-
-class BoxArchiving(Relation):
-    origin_box_id = models.ForeignKey(OriginBox, on_delete=models.PROTECT,
-                                      blank=True, null=True)
-    document_url = models.URLField(blank=True, null=True)
-    cover_sheet = models.CharField(max_length=100, blank=True, null=True)
 
 
 class FrequencyRelation(Relation):
