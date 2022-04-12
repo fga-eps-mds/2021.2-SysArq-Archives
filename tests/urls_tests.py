@@ -648,6 +648,8 @@ def test_search_without_specific_fields_from_admin_process():
         "rack_id": None,
         "file_location_id": None,
         "box_abbreviation_id": None,
+        "box_number": "1",
+        "box_year": 2022
     }
 
     data['document_name_id'] = response_document_name.data['id']

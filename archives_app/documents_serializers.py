@@ -171,6 +171,8 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "shelf_id",
                   "file_location_id",
                   "box_abbreviation_id",
+                  "box_number",
+                  "box_year",
                   )
 
 

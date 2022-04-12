@@ -104,3 +104,5 @@ class AdministrativeProcess(Document):
                                             null=True)
     box_abbreviation_id = models.ForeignKey(BoxAbbreviations, models.PROTECT, blank=True,
                                                 null=True)
+    box_number = models.CharField(max_length=100, blank=True, null=True)
+    box_year = models.IntegerField(validators=[MinValueValidator(1900)], blank=True, null=True)
