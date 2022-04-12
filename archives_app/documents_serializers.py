@@ -176,7 +176,7 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "sender_unity",
                   #   "subject_id",
                   "document_name_id",
-                  "unity_id",
+                  "administrative_unity_id",
                   #   "document_subject_name",
                   "sender_unity_name"
                   )
