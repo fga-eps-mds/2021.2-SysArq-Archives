@@ -14,6 +14,7 @@ from .documents_serializers import (FrequencySheetSerializer,
                                     BoxArchivingSerializer)
 import json
 
+
 class DocumentNameViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows document types to be viewed or edited.
@@ -61,7 +62,7 @@ class RackViewSet(viewsets.ModelViewSet):
     queryset = Rack.objects.all()
     serializer_class = RackSerializer
 
-    
+
 class LocationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows documents location to be viewed or edited.
@@ -69,7 +70,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     queryset = FileLocation.objects.all()
     serializer_class = LocationSerializer
 
-    
+
 class FrontCoverViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -258,9 +259,9 @@ class SearchView(views.APIView):
             filter_dict_fk = {}
 
             if (
-                'id' in list(filter_dict.keys())[0] or
-                'sender_unity' in list(filter_dict.keys())[0] or
-                'sender_user' in list(filter_dict.keys())[0]
+                'id' in list(filter_dict.keys())[0]
+                or 'sender_unity' in list(filter_dict.keys())[0]
+                or 'sender_user' in list(filter_dict.keys())[0]
             ):
                 if 'abbreviation_id' in list(filter_dict.keys())[0]:
                     contains = 'abbreviation_id__name__icontains'
@@ -271,8 +272,8 @@ class SearchView(views.APIView):
                     contains = '{}__unity_name__icontains'.format(
                         list(filter_dict.keys())[0])
                 elif (
-                    'person_id' in list(filter_dict.keys())[0] or
-                    'sender_user' in list(filter_dict.keys())[0]
+                    'person_id' in list(filter_dict.keys())[0]
+                    or 'sender_user' in list(filter_dict.keys())[0]
                 ):
                     contains = '{}__name__icontains'.format(
                         list(filter_dict.keys())[0])

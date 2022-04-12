@@ -583,7 +583,7 @@ def test_search_without_specific_fields_from_admin_process():
 
     api_client = APIClient()
 
-    data_document_name= {
+    data_document_name = {
         "document_name": "name",
         "temporality": 2020
     }
