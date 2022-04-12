@@ -58,7 +58,7 @@ class FrequencyRelation(Relation):
                                   blank=True, null=True, related_name='sender_publicworker')
     sender_cpf = models.CharField(max_length=11)
     receiver_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
-                                  blank=True, null=True, related_name='receiver_publicworker')
+                                    blank=True, null=True, related_name='receiver_publicworker')
     receiver_cpf = models.CharField(max_length=11)
 
 
@@ -82,9 +82,9 @@ class FrequencySheet(models.Model):
 class AdministrativeProcess(Document):
     notice_date = models.DateField()
     interested = models.CharField(max_length=150)
-    document_name_id= models.ForeignKey(DocumentName, on_delete=models.PROTECT,
-                                    blank=True, null=True)
     reference_month_year = models.DateField(blank=True, null=True)
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
+                                         blank=True, null=True)
     sender_user = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
                                     blank=True, null=True)
     archiving_date = models.DateField(blank=True, null=True)
