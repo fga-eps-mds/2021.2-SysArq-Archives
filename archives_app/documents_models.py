@@ -10,11 +10,6 @@ class Document(models.Model):
     sender_unity = models.ForeignKey(Unity, on_delete=models.PROTECT)
     notes = models.CharField(max_length=300, blank=True, null=True)
     filer_user = models.CharField(max_length=150)
-    is_filed = models.BooleanField(blank=True, null=True)
-    is_eliminated = models.BooleanField(blank=True, null=True)
-    send_date = models.DateField(blank=True, null=True)
-    unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
-                                 null=True, related_name='unfiled_unity')
 
 
 class Relation(Document):
@@ -49,6 +44,11 @@ class BoxArchiving(Relation):
     origin_box_id = models.ForeignKey(OriginBox, on_delete=models.PROTECT,
                                       blank=True, null=True)
     document_url = models.URLField(blank=True, null=True)
+    is_filed = models.BooleanField(blank=True, null=True)
+    is_eliminated = models.BooleanField(blank=True, null=True)
+    send_date = models.DateField(blank=True, null=True)
+    unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
+                                 null=True, related_name='unfiled_unity')
     box_process_number = models.CharField(max_length=15, blank=True, null=True)
     cover_sheet = models.CharField(max_length=100, blank=True, null=True)
     document_names = models.ManyToManyField(DocumentNames)
@@ -94,6 +94,11 @@ class AdministrativeProcess(Document):
     sender_user = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
                                     blank=True, null=True)
     archiving_date = models.DateField(blank=True, null=True)
+    is_filed = models.BooleanField(blank=True, null=True)
+    is_eliminated = models.BooleanField(blank=True, null=True)
+    send_date = models.DateField(blank=True, null=True)
+    administrative_unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
+                                                null=True, related_name='unfiled_unity')
     administrative_process_number = models.CharField(max_length=15, blank=True, null=True)
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
