@@ -48,7 +48,7 @@ class BoxArchiving(Relation):
     is_eliminated = models.BooleanField(blank=True, null=True)
     send_date = models.DateField(blank=True, null=True)
     unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
-                                 null=True, related_name='unfiled_unity')
+                                 null=True, related_name='unfiled_unity_box')
     box_process_number = models.CharField(max_length=15, blank=True, null=True)
     cover_sheet = models.CharField(max_length=100, blank=True, null=True)
     document_names = models.ManyToManyField(DocumentNames)
