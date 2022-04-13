@@ -71,7 +71,7 @@ class BoxArchivingSerializer(serializers.ModelSerializer):
             "is_eliminated",
             "send_date",
             "box_process_number",
-            "unity_id",
+            "box_unity_id",
             "abbreviation_name",
             "shelf_number",
             "rack_number",
