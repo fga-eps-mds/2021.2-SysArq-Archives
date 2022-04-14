@@ -142,9 +142,6 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
 
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
     sender_user_name = serializers.SerializerMethodField('get_sender_user')
-  #  document_subject_name = serializers.SerializerMethodField(
-  #      'get_document_subject'
-  #  )
 
     class Meta:
         model = AdministrativeProcess
