@@ -14,6 +14,7 @@ from .documents_serializers import (FrequencySheetSerializer,
                                     BoxArchivingSerializer)
 import json
 
+
 class DocumentNameViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows document types to be viewed or edited.
@@ -61,7 +62,7 @@ class RackViewSet(viewsets.ModelViewSet):
     queryset = Rack.objects.all()
     serializer_class = RackSerializer
 
-    
+
 class LocationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows documents location to be viewed or edited.
@@ -69,7 +70,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     queryset = FileLocation.objects.all()
     serializer_class = LocationSerializer
 
-    
+
 class FrontCoverViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -137,6 +138,9 @@ class BoxArchivingView(views.APIView):
             docs.append(d_t)
 
         sender_unity_id = Unity.objects.get(pk=request.data['sender_unity'])
+
+        if BoxArchiving.objects.filter(process_number=request.data['process_number']).exists():
+            return Response(status=400)
 
         box_archiving = BoxArchiving.objects.create(
             process_number=request.data['process_number'],
