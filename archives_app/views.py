@@ -7,12 +7,13 @@ from .fields_serializers import FrontCoverSerializer, ShelfSerializer
 from .fields_models import BoxAbbreviations, DocumentName
 from .fields_models import Unity, Shelf, FrontCover, Rack, PublicWorker, FileLocation
 from .documents_models import (BoxArchiving, FrequencyRelation, AdministrativeProcess,
-                               OriginBox, FrequencySheet, OriginBoxSubject, DocumentNames)
+                               OriginBox, FrequencySheet, OriginBoxSubject, DocumentNames, Document)
 from .documents_serializers import (FrequencySheetSerializer,
                                     AdministrativeProcessSerializer,
                                     FrequencyRelationSerializer,
                                     BoxArchivingSerializer)
 import json
+
 
 class DocumentNameViewSet(viewsets.ModelViewSet):
     """
@@ -61,7 +62,7 @@ class RackViewSet(viewsets.ModelViewSet):
     queryset = Rack.objects.all()
     serializer_class = RackSerializer
 
-    
+
 class LocationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows documents location to be viewed or edited.
@@ -69,7 +70,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     queryset = FileLocation.objects.all()
     serializer_class = LocationSerializer
 
-    
+
 class FrontCoverViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -145,8 +146,17 @@ class BoxArchivingView(views.APIView):
             received_date=request.data['received_date'],
             document_url=request.data['document_url'],
             cover_sheet=request.data['cover_sheet'],
-            filer_user=request.data['filer_user']
+            filer_user=request.data['filer_user'],
+            is_filed=request.data['is_filed'],
+            is_eliminated=request.data['is_eliminated'],
+            send_date=request.data['send_date'],
+            box_process_number=request.data['box_process_number'],
         )
+
+        if request.data['unity_id'] != '':
+            unityId = Unity.objects.get(pk=request.data['unity_id'])
+            box_archiving.unity_id = unityId
+            box_archiving.save()
 
         if request.data['abbreviation_id'] != '':
             box_abbreviation_id = BoxAbbreviations.objects.get(
