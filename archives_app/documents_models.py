@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from archives_app.fields_models import (BoxAbbreviations, DocumentName, Shelf,
-                                        Unity, Rack, PublicWorker, FileLocation)
+                                        Unity, Rack, PublicWorker)
 from django.core.validators import MinValueValidator
 
 
@@ -43,6 +43,12 @@ class BoxArchiving(Relation):
                                 null=True)
     origin_box_id = models.ForeignKey(OriginBox, on_delete=models.PROTECT,
                                       blank=True, null=True)
+    is_filed = models.BooleanField(blank=True, null=True)
+    is_eliminated = models.BooleanField(blank=True, null=True)
+    send_date = models.DateField(blank=True, null=True)
+    box_process_number = models.CharField(max_length=15, blank=True, null=True)
+    unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
+                                 null=True, related_name='unfiled_box_unity')
     document_url = models.URLField(blank=True, null=True)
     cover_sheet = models.CharField(max_length=100, blank=True, null=True)
     document_names = models.ManyToManyField(DocumentNames)
@@ -58,7 +64,7 @@ class FrequencyRelation(Relation):
                                   blank=True, null=True, related_name='sender_publicworker')
     sender_cpf = models.CharField(max_length=11)
     receiver_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
-                                  blank=True, null=True, related_name='receiver_publicworker')
+                                    blank=True, null=True, related_name='receiver_publicworker')
     receiver_cpf = models.CharField(max_length=11)
 
 
@@ -82,8 +88,8 @@ class FrequencySheet(models.Model):
 class AdministrativeProcess(Document):
     notice_date = models.DateField()
     interested = models.CharField(max_length=150)
-    document_name_id= models.ForeignKey(DocumentName, on_delete=models.PROTECT,
-                                    blank=True, null=True)
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
+                                         blank=True, null=True)
     reference_month_year = models.DateField(blank=True, null=True)
     sender_user = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
                                     blank=True, null=True)
@@ -96,13 +102,3 @@ class AdministrativeProcess(Document):
                                  null=True, related_name='unfiled_unity')
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
-    shelf_id = models.ForeignKey(Shelf, on_delete=models.PROTECT, blank=True,
-                                        null=True)
-    rack_id = models.ForeignKey(Rack, on_delete=models.PROTECT, blank=True,
-                                    null=True)
-    file_location_id = models.ForeignKey(FileLocation, models.PROTECT, blank=True,
-                                            null=True)
-    box_abbreviation_id = models.ForeignKey(BoxAbbreviations, models.PROTECT, blank=True,
-                                                null=True)
-    box_number = models.CharField(max_length=100, blank=True, null=True)
-    box_year = models.IntegerField(validators=[MinValueValidator(1900)], blank=True, null=True)
