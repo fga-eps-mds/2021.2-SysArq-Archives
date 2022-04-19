@@ -145,8 +145,14 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
             return obj.sender_user.name
         return ""
 
+    def get_document_name(self, obj):
+        if obj.document_name_id is not None:
+            return obj.document_name_id.document_name
+        return ""
+
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity')
     sender_user_name = serializers.SerializerMethodField('get_sender_user')
+    document_name = serializers.SerializerMethodField('get_document_name')
 
     class Meta:
         model = AdministrativeProcess
@@ -168,6 +174,7 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "sender_unity",
                   #   "subject_id",
                   "document_name_id",
+                  "document_name",
                   "unity_id",
                   #   "document_subject_name",
                   "sender_unity_name"
