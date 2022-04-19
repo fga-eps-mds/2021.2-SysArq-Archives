@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator
 
 
 class Document(models.Model):
-    process_number = models.CharField(max_length=20)
+    process_number = models.CharField(max_length=20, unique=True)
     sender_unity = models.ForeignKey(Unity, on_delete=models.PROTECT)
     notes = models.CharField(max_length=300, blank=True, null=True)
     filer_user = models.CharField(max_length=150)
@@ -91,6 +91,8 @@ class AdministrativeProcess(Document):
     document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
                                          blank=True, null=True)
     reference_month_year = models.DateField(blank=True, null=True)
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
+                                         blank=True, null=True)
     sender_user = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
                                     blank=True, null=True)
     archiving_date = models.DateField(blank=True, null=True)

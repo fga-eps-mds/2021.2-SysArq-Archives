@@ -139,6 +139,9 @@ class BoxArchivingView(views.APIView):
 
         sender_unity_id = Unity.objects.get(pk=request.data['sender_unity'])
 
+        if BoxArchiving.objects.filter(process_number=request.data['process_number']).exists():
+            return Response(status=400)
+
         box_archiving = BoxArchiving.objects.create(
             process_number=request.data['process_number'],
             sender_unity=sender_unity_id,
