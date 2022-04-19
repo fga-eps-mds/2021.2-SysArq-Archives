@@ -388,7 +388,12 @@ def box_archiving():
         "filer_user": "1",
         "abbreviation_id": "",
         "shelf_id": "",
-        "rack_id": ""
+        "rack_id": "",
+        "is_filed": "",
+        "is_eliminated": "",
+        "send_date": "2020-11-11",
+        "box_process_number": "1",
+        "unity_id": response_sender.data['id']
     }
 
     return data

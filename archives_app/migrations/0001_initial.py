@@ -184,6 +184,10 @@ class Migration(migrations.Migration):
             name='BoxArchiving',
             fields=[
                 ('relation_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='archives_app.relation')),
+                ('is_filed', models.BooleanField(blank=True, null=True)),
+                ('is_eliminated', models.BooleanField(blank=True, null=True)),
+                ('send_date', models.DateField(blank=True, null=True)),
+                ('box_process_number', models.CharField(blank=True, max_length=15, null=True)),
                 ('document_url', models.URLField(blank=True, null=True)),
                 ('cover_sheet', models.CharField(blank=True, max_length=100, null=True)),
                 ('abbreviation_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.boxabbreviations')),
@@ -191,6 +195,7 @@ class Migration(migrations.Migration):
                 ('origin_box_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.originbox')),
                 ('rack_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.rack')),
                 ('shelf_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='archives_app.shelf')),
+                ('unity_id', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='unfiled_box_unity', to='archives_app.unity')),
             ],
             bases=('archives_app.relation',),
         ),
