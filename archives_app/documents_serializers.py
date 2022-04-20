@@ -128,7 +128,8 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "administrative_process_number",
                   "sender_unity",
                   #   "subject_id",
-                  "dest_unity_id",
+                  "document_name_id",
+                  "document_name",
                   "unity_id",
                   #   "document_subject_name",
                   "sender_unity_name"
