@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator
 
 
 class Document(models.Model):
-    process_number = models.CharField(max_length=20)
+    process_number = models.CharField(max_length=20, unique=True)
     sender_unity = models.ForeignKey(Unity, on_delete=models.PROTECT)
     notes = models.CharField(max_length=300, blank=True, null=True)
     filer_user = models.CharField(max_length=150)
@@ -44,18 +44,29 @@ class OriginBox(models.Model):
 
 
 class BoxArchiving(Relation):
+    is_filed = models.BooleanField(blank=True, null=True)
+    is_eliminated = models.BooleanField(blank=True, null=True)
+    send_date = models.DateField(blank=True, null=True)
+    box_process_number = models.CharField(max_length=15, blank=True, null=True)
+    unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
+                                 null=True, related_name='unfiled_box_unity')
     document_url = models.URLField(blank=True, null=True)
     cover_sheet = models.CharField(max_length=100, blank=True, null=True)
     origin_boxes = models.ManyToManyField(OriginBox)
 
 
 class FrequencyRelation(Relation):
-    document_date = models.DateField()
-    reference_period = ArrayField(models.DateField())
+    reference_period = ArrayField(models.CharField(max_length=8))
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
     document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
                                          blank=True, null=True)
+    sender_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
+                                  blank=True, null=True, related_name='sender_publicworker')
+    sender_cpf = models.CharField(max_length=11)
+    receiver_id = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
+                                    blank=True, null=True, related_name='receiver_publicworker')
+    receiver_cpf = models.CharField(max_length=11)
 
 
 class FrequencySheet(models.Model):
@@ -64,7 +75,7 @@ class FrequencySheet(models.Model):
     cpf = models.CharField(max_length=11)
     role = models.CharField(max_length=100)
     category = models.CharField(max_length=100, blank=True, null=True)
-    workplace = models.CharField(max_length=100)
+    workplace = models.ForeignKey(on_delete=models.PROTECT, to='archives_app.unity')
     municipal_area = models.CharField(max_length=100)
     reference_period = models.DateField()
     document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
@@ -78,11 +89,11 @@ class FrequencySheet(models.Model):
 class AdministrativeProcess(Document):
     notice_date = models.DateField()
     interested = models.CharField(max_length=150)
-    cpf_cnpj = models.CharField(max_length=15, blank=True, null=True)
-  #  subject_id = models.ForeignKey(DocumentSubject, on_delete=models.PROTECT)
-    dest_unity_id = models.ForeignKey(Unity, on_delete=models.PROTECT, blank=True,
-                                      null=True, related_name='unity')
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
+                                         blank=True, null=True)
     reference_month_year = models.DateField(blank=True, null=True)
+    document_name_id = models.ForeignKey(DocumentName, on_delete=models.PROTECT,
+                                         blank=True, null=True)
     sender_user = models.ForeignKey(PublicWorker, on_delete=models.PROTECT,
                                     blank=True, null=True)
     archiving_date = models.DateField(blank=True, null=True)

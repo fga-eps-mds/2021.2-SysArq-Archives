@@ -385,6 +385,11 @@ def box_archiving():
         "document_url": "https://www.t.com/",
         "cover_sheet": "1",
         "filer_user": "1",
+        "is_filed": "",
+        "is_eliminated": "",
+        "send_date": "2020-11-11",
+        "box_process_number": "1",
+        "unity_id": response_sender.data['id']
     }
 
     return data
@@ -397,6 +402,7 @@ def test_box_archiving_relation_get_pk():
 
     data = box_archiving()
 
+    data['process_number'] = "2"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -427,6 +433,7 @@ def test_box_archiving_relation_post():
 
     data = box_archiving()
 
+    data['process_number'] = "3"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -440,6 +447,7 @@ def test_delete_box_archiving_relation():
 
     data = box_archiving()
 
+    data['process_number'] = "3"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -470,6 +478,7 @@ def test_search():
 
     data = box_archiving()
 
+    data['process_number'] = "4"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -498,6 +507,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['shelf_id'] = response_shelf.data['id']
 
+    data["process_number"] = "5"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -517,6 +527,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['rack_id'] = response_rack.data['id']
 
+    data["process_number"] = "6"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -532,6 +543,7 @@ def test_search_without_specific_fields_from_box_archiving():
         "year": 2020
     }
 
+    data["process_number"] = "7"
     response_abbreviation = api_client.post(
         '/box-abbreviation/', data=data_abbreviation,
         header={"Content-Type": "application/json"})
@@ -539,6 +551,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['abbreviation_id'] = response_abbreviation.data['id']
 
+    data["process_number"] = "8"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -564,6 +577,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['sender_unity'] = response_unity.data['id']
 
+    data["process_number"] = "9"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -579,15 +593,15 @@ def test_search_without_specific_fields_from_admin_process():
 
     api_client = APIClient()
 
-    data_subject = {
-        "subject_name": "name",
+    data_document_name = {
+        "document_name": "name",
         "temporality": 2020
     }
 
-    response_subject = api_client.post(
-        '/document-name/', data=data_subject,
+    response_document_name = api_client.post(
+        '/document-name/', data=data_document_name,
         header={"Content-Type": "application/json"})
-    assert response_subject.status_code == 201
+    assert response_document_name.status_code == 201
 
     data_unity = {
         "unity_name": "unity1",
@@ -610,7 +624,6 @@ def test_search_without_specific_fields_from_admin_process():
         "filer_user": "1",
         "notice_date": "2020-11-11",
         "interested": "1",
-        "cpf_cnpj": "11111111111",
         "reference_month_year": "2020-11-11",
         "sender_user": None,
         "archiving_date": "2020-11-11",
@@ -619,23 +632,19 @@ def test_search_without_specific_fields_from_admin_process():
         "temporality_date": 2021,
         "send_date": "2021-11-11",
         "administrative_process_number": "1",
-        "sender_unity": None,
-        "subject_id": None,
-        "dest_unity_id": None,
-        "unity_id": None
+        "document_name_id": None,
+        "sender_unity": None
     }
 
-    data['subject_id'] = response_subject.data['id']
+    data['document_name_id'] = response_document_name.data['id']
     data['sender_unity'] = response_unity.data['id']
-    data['dest_unity_id'] = response_unity.data['id']
-    data['unity_id'] = response_unity.data['id']
 
     response_admin = api_client.post(
         '/administrative-process/', data=data,
         format='json')
     assert response_admin.status_code == 201
 
-    response = api_client.get('/search/?filter={"subject_id":"unity1"}')
+    response = api_client.get('/search/?filter={"document_name_id":1}')
     assert response.status_code == 200
 
 
@@ -644,6 +653,16 @@ def test_search_without_specific_fields_from_admin_process():
 def test_search_without_specific_fields_from_frequency_sheet():
 
     api_client = APIClient()
+
+    data_unity = {
+        "unity_name": "unity1",
+        "unity_abbreviation": "u1",
+        "administrative_bond": "a",
+        "bond_abbreviation": "a",
+        "municipality": "test",
+        "telephone_number": "a",
+        "notes": "1"
+    }
 
     data_name = {
         "document_name": "name",
@@ -654,6 +673,11 @@ def test_search_without_specific_fields_from_frequency_sheet():
         '/document-name/', data=data_name,
         header={"Content-Type": "application/json"})
     assert response_name.status_code == 201
+
+    response_unity = api_client.post(
+        '/unity/', data=data_unity,
+        header={"Content-Type": "application/json"})
+    assert response_unity.status_code == 201
 
     data_pw = {
         "name": "person1",
@@ -670,7 +694,7 @@ def test_search_without_specific_fields_from_frequency_sheet():
         "cpf": "1",
         "role": "1",
         "category": "1",
-        "workplace": "1",
+        "workplace": None,
         "municipal_area": "1",
         "reference_period": "2020-11-11",
         "notes": "1",
@@ -679,6 +703,7 @@ def test_search_without_specific_fields_from_frequency_sheet():
         "temporality_date": 2021
     }
 
+    data['workplace'] = response_unity.data['id']
     data['document_name_id'] = response_name.data['id']
     data['person_id'] = response_pw.data['id']
 
