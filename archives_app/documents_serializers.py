@@ -132,7 +132,13 @@ class AdministrativeProcessSerializer(serializers.ModelSerializer):
                   "document_name",
                   "unity_id",
                   #   "document_subject_name",
-                  "sender_unity_name"
+                  "sender_unity_name",
+                  "shelf_id",
+                  "rack_id",
+                  "file_location_id",
+                  "box_abbreviation_id",
+                  "box_year",
+                  "box_number",
                   )
 
 
@@ -149,7 +155,7 @@ class OriginBoxSerializer(serializers.ModelSerializer):
         return None
 
     def get_file_location(self, obj):
-        if obj.abbreviation_id is not None:
+        if obj.file_location_id is not None:
             return obj.file_location_id.file
         return ""
 
