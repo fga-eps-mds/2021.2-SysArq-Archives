@@ -347,6 +347,7 @@ def box_archiving():
     response_sender = api_client.post(
         '/unity/', data=data_sender,
         header={"Content-Type": "application/json"})
+
     assert response_sender.status_code == 201
 
     data_name = {
@@ -360,24 +361,22 @@ def box_archiving():
     assert response_name.status_code == 201
 
     data = {
-        "origin_box_id":
-        {
-            "number": "1",
-            "year": 2020,
-            "subjects_list": [
-                {
-                    "name": "teste",
-                    "dates": ["2020-11-11"]
-                }
-            ]
-        },
-        "document_names": [
+        "origin_boxes": [
             {
-                "document_name_id": response_name.data['id'],
+                "number": "1",
                 "year": 2020,
-                "month": "01",
-                "temporality_date": 2030
-            }
+                "rack_id": "",
+                "shelf_id": "",
+                "file_location_id": "",
+                "box_notes": "",
+                "subjects_list": [
+                    {
+                        "document_name_id": response_name.data['id'],
+                        "year": ["2020"],
+                        "month": ["11"],
+                    }
+                ]
+            },
         ],
         "process_number": "1",
         "sender_unity": response_sender.data['id'],
@@ -386,9 +385,11 @@ def box_archiving():
         "document_url": "https://www.t.com/",
         "cover_sheet": "1",
         "filer_user": "1",
-        "abbreviation_id": "",
-        "shelf_id": "",
-        "rack_id": ""
+        "is_filed": "",
+        "is_eliminated": "",
+        "send_date": "2020-11-11",
+        "box_process_number": "1",
+        "unity_id": response_sender.data['id']
     }
 
     return data
@@ -401,6 +402,7 @@ def test_box_archiving_relation_get_pk():
 
     data = box_archiving()
 
+    data['process_number'] = "2"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -431,6 +433,7 @@ def test_box_archiving_relation_post():
 
     data = box_archiving()
 
+    data['process_number'] = "3"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -444,6 +447,7 @@ def test_delete_box_archiving_relation():
 
     data = box_archiving()
 
+    data['process_number'] = "3"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -474,6 +478,7 @@ def test_search():
 
     data = box_archiving()
 
+    data['process_number'] = "4"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -502,6 +507,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['shelf_id'] = response_shelf.data['id']
 
+    data["process_number"] = "5"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -521,6 +527,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['rack_id'] = response_rack.data['id']
 
+    data["process_number"] = "6"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -536,6 +543,7 @@ def test_search_without_specific_fields_from_box_archiving():
         "year": 2020
     }
 
+    data["process_number"] = "7"
     response_abbreviation = api_client.post(
         '/box-abbreviation/', data=data_abbreviation,
         header={"Content-Type": "application/json"})
@@ -543,6 +551,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['abbreviation_id'] = response_abbreviation.data['id']
 
+    data["process_number"] = "8"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -568,6 +577,7 @@ def test_search_without_specific_fields_from_box_archiving():
 
     data['sender_unity'] = response_unity.data['id']
 
+    data["process_number"] = "9"
     response_box_archiving = api_client.post(
         '/box-archiving/', data=data,
         format='json')
@@ -583,7 +593,7 @@ def test_search_without_specific_fields_from_admin_process():
 
     api_client = APIClient()
 
-    data_document_name= {
+    data_document_name = {
         "document_name": "name",
         "temporality": 2020
     }

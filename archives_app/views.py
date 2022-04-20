@@ -7,12 +7,13 @@ from .fields_serializers import FrontCoverSerializer, ShelfSerializer
 from .fields_models import BoxAbbreviations, DocumentName
 from .fields_models import Unity, Shelf, FrontCover, Rack, PublicWorker, FileLocation
 from .documents_models import (BoxArchiving, FrequencyRelation, AdministrativeProcess,
-                               OriginBox, FrequencySheet, OriginBoxSubject, DocumentNames)
+                               OriginBox, FrequencySheet, OriginBoxSubject, DocumentNames, Document)
 from .documents_serializers import (FrequencySheetSerializer,
                                     AdministrativeProcessSerializer,
                                     FrequencyRelationSerializer,
                                     BoxArchivingSerializer)
 import json
+
 
 class DocumentNameViewSet(viewsets.ModelViewSet):
     """
@@ -61,7 +62,7 @@ class RackViewSet(viewsets.ModelViewSet):
     queryset = Rack.objects.all()
     serializer_class = RackSerializer
 
-    
+
 class LocationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows documents location to be viewed or edited.
@@ -69,7 +70,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     queryset = FileLocation.objects.all()
     serializer_class = LocationSerializer
 
-    
+
 class FrontCoverViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -113,30 +114,41 @@ class BoxArchivingView(views.APIView):
         return Response(serializer.data, status=200)
 
     def post(self, request):
-        origin_box = request.data['origin_box_id']
+        origin_boxes = request.data['origin_boxes']
+        boxes = list()
 
-        if origin_box != {}:
-            print(origin_box)
+        for box_n in origin_boxes:
             box = OriginBox.objects.create(
-                number=origin_box['number'], year=origin_box['year'])
-            for subject in origin_box['subjects_list']:
-                sub = OriginBoxSubject.objects.create(name=subject['name'],
-                                                      dates=subject['dates'])
-                box.subject.add(sub.id)
+                number=box_n['number'],
+                year=box_n['year'],
+                box_notes=box_n['box_notes'])
 
-        documents_list = request.data['document_names']
-        docs = list()
+            if box_n['shelf_id'] != '':
+                shelf_number_id = Shelf.objects.get(pk=box_n['shelf_id'])
+                box_archiving.shelf_id = shelf_number_id
 
-        for doc_n in documents_list:
-            d_id = DocumentName.objects.get(pk=doc_n['document_name_id'])
-            d_t = DocumentNames.objects.create(
-                document_name_id=d_id,
-                year=doc_n['year'],
-                month=doc_n['month'],
-                temporality_date=doc_n['temporality_date'])
-            docs.append(d_t)
+            if box_n['rack_id'] != '':
+                rack_number_id = Rack.objects.get(pk=box_n['rack_id'])
+                box_archiving.rack_id = rack_number_id
+
+            if box_n['file_location_id'] != '':
+                file_location_id = FileLocation.objects.get(pk=box_n['file_location_id'])
+                box_archiving.file_location_id = file_location_id
+
+            for subject in box_n['subjects_list']:
+                if subject['document_name_id'] != '':
+                    document_name_id = DocumentName.objects.get(pk=subject['document_name_id'])
+                    sub = OriginBoxSubject.objects.create(document_name_id=document_name_id,
+                                                      year=subject['year'],
+                                                      month=subject['month'])
+                    box.subject.add(sub.id)
+
+            boxes.append(box)
 
         sender_unity_id = Unity.objects.get(pk=request.data['sender_unity'])
+
+        if BoxArchiving.objects.filter(process_number=request.data['process_number']).exists():
+            return Response(status=400)
 
         box_archiving = BoxArchiving.objects.create(
             process_number=request.data['process_number'],
@@ -145,34 +157,21 @@ class BoxArchivingView(views.APIView):
             received_date=request.data['received_date'],
             document_url=request.data['document_url'],
             cover_sheet=request.data['cover_sheet'],
-            filer_user=request.data['filer_user']
+            filer_user=request.data['filer_user'],
+            is_filed=request.data['is_filed'],
+            is_eliminated=request.data['is_eliminated'],
+            send_date=request.data['send_date'],
+            box_process_number=request.data['box_process_number'],
         )
 
-        if request.data['abbreviation_id'] != '':
-            box_abbreviation_id = BoxAbbreviations.objects.get(
-                pk=request.data['abbreviation_id']
-            )
-            box_archiving.abbreviation_id = box_abbreviation_id
+        for box in boxes:
+            box_archiving.origin_boxes.add(box.id)
+
+        if request.data['unity_id'] != '':
+            unityId = Unity.objects.get(pk=request.data['unity_id'])
+            box_archiving.unity_id = unityId
             box_archiving.save()
 
-        if request.data['shelf_id'] != '':
-            shelf_number_id = Shelf.objects.get(pk=request.data['shelf_id'])
-            box_archiving.shelf_id = shelf_number_id
-            box_archiving.save()
-
-        if request.data['rack_id'] != '':
-            rack_number_id = Rack.objects.get(pk=request.data['rack_id'])
-            box_archiving.rack_id = rack_number_id
-            box_archiving.save()
-
-        if origin_box != {}:
-            if box is not None:
-                print(box.id)
-                box_archiving.origin_box_id = box
-                box_archiving.save()
-
-        for doc in docs:
-            box_archiving.document_names.add(doc.id)
 
         return Response(status=201)
 
@@ -193,36 +192,34 @@ class BoxArchivingDetailsView(views.APIView):
             queryset = BoxArchiving.objects.get(pk=pk)
             serializer = BoxArchivingSerializer(queryset)
 
-            doc_names = serializer.data['document_names']
-            docs = list()
-            for doc in doc_names:
-                docs_dict = {}
-                doc_n = DocumentNames.objects.get(pk=doc)
-                doc_name = DocumentNameSerializer(doc_n.document_name_id)
-                doc_name = doc_name.data
-                docs_dict['document_name_id'] = doc_name['id']
-                docs_dict['document_name_name'] = doc_name['document_name']
-                docs_dict['year'] = doc_n.year
-                docs_dict['month'] = doc_n.month
-                docs_dict['temporality_date'] = doc_n.temporality_date
-                docs.append(docs_dict)
+            box_list = serializer.data['origin_boxes']
+            boxes = list()
+            for box in box_list:
+                box_dict = {}
+                if box is not None:
+                    box_n = OriginBox.objects.get(pk=box)
 
-            box_id = serializer.data['origin_box_id']
-            box_dict = {}
-            if box_id is not None:
-                box = OriginBox.objects.get(pk=box_id)
-                box_dict['number'] = box.number
-                box_dict['year'] = box.year
-                box_dict['subject_list'] = list()
-                for subject in box.subject.all():
-                    box_dict['subject_list'].append({
-                        'name': subject.name,
-                        'date': subject.dates
-                    })
+                    box_dict['number'] = box_n.number
+                    box_dict['year'] = box_n.year
+                    box_dict['box_notes'] = box_n.box_notes
+                    box_dict['rack_id'] = box_n.rack_id
+                    box_dict['shelf_id'] = box_n.shelf_id
+                    box_dict['file_location_id'] = box_n.file_location_id
+
+                    box_dict['subject_list'] = list()
+                    for subject in box_n.subject.all():
+                        document_name = DocumentNameSerializer(subject.document_name_id)
+                        document_name = document_name.data
+                        box_dict['subject_list'].append({
+                            'document_name_id': document_name['id'],
+                            'document_name': document_name['document_name'],
+                            'year': subject.year,
+                            'month': subject.month
+                        })
+                    boxes.append(box_dict)
 
             final_dict = serializer.data
-            final_dict['origin_box'] = box_dict
-            final_dict['document_names'] = docs
+            final_dict['origin_boxes'] = boxes
             return Response(final_dict, status=200)
 
         except BoxArchiving.DoesNotExist:
