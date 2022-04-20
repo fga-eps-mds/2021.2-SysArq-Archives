@@ -105,3 +105,13 @@ class AdministrativeProcess(Document):
                                  null=True, related_name='unfiled_unity')
     temporality_date = models.IntegerField(validators=[MinValueValidator(1900)],
                                            blank=True, null=True)
+    shelf_id = models.ForeignKey(Shelf, on_delete=models.PROTECT, blank=True,
+                                 null=True)
+    rack_id = models.ForeignKey(Rack, on_delete=models.PROTECT, blank=True,
+                                null=True)
+    file_location_id = models.ForeignKey(FileLocation, on_delete=models.PROTECT,
+                                         blank=True, null=True)
+    box_abbreviation_id = models.ForeignKey(BoxAbbreviations, on_delete=models.PROTECT,
+                                         blank=True, null=True)
+    box_number = models.CharField(max_length=100, blank=True, null=True)
+    box_year = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(1900)])
