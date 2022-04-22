@@ -28,4 +28,8 @@ urlpatterns = [
          views.NumberByYearAndAbbreviation.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('search/', views.SearchView.as_view()),
+    path('report/', views.ReportView.as_view()),
+    path('frequency-sheet-report/', views.FrequencySheetReport.as_view()),
+    path('frequency-relation-report/', views.FrequencyRelationReport.as_view()),
+    path('administrative-process-report/', views.AdministrativeProcessReport.as_view()),
 ]

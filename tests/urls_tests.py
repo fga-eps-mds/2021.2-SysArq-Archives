@@ -439,6 +439,15 @@ def test_box_archiving_relation_post():
         format='json')
     assert response_box_archiving.status_code == 201
 
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_report_get():
+    api_client = APIClient()
+
+    response_report_get = api_client.get(
+        '/report/?document_name_id=1&initial_date=2022-10-04&final_date=2022-11-04')
+
+    assert response_report_get.status_code == 200
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
