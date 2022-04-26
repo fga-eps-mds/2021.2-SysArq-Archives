@@ -125,15 +125,15 @@ class BoxArchivingView(views.APIView):
 
             if box_n['shelf_id'] != '':
                 shelf_number_id = Shelf.objects.get(pk=box_n['shelf_id'])
-                box_archiving.shelf_id = shelf_number_id
+                box.shelf_id = shelf_number_id
 
             if box_n['rack_id'] != '':
                 rack_number_id = Rack.objects.get(pk=box_n['rack_id'])
-                box_archiving.rack_id = rack_number_id
+                box.rack_id = rack_number_id
 
             if box_n['file_location_id'] != '':
                 file_location_id = FileLocation.objects.get(pk=box_n['file_location_id'])
-                box_archiving.file_location_id = file_location_id
+                box.file_location_id = file_location_id
 
             for subject in box_n['subjects_list']:
                 if subject['document_name_id'] != '':
