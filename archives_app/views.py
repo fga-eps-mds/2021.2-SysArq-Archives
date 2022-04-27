@@ -125,15 +125,15 @@ class BoxArchivingView(views.APIView):
 
             if box_n['shelf_id'] != '':
                 shelf_number_id = Shelf.objects.get(pk=box_n['shelf_id'])
-                box_archiving.shelf_id = shelf_number_id
+                box.shelf_id = shelf_number_id
 
             if box_n['rack_id'] != '':
                 rack_number_id = Rack.objects.get(pk=box_n['rack_id'])
-                box_archiving.rack_id = rack_number_id
+                box.rack_id = rack_number_id
 
             if box_n['file_location_id'] != '':
                 file_location_id = FileLocation.objects.get(pk=box_n['file_location_id'])
-                box_archiving.file_location_id = file_location_id
+                box.file_location_id = file_location_id
 
             for subject in box_n['subjects_list']:
                 if subject['document_name_id'] != '':
@@ -354,3 +354,98 @@ class NumberByYearAndAbbreviation(views.APIView):
             return Response('Nao foi encontrado objeto com este valor', status=204)
         serializer = BoxAbbreviationsSerializer(queryset, many=True)
         return Response(serializer.data, status=200)
+  
+class ReportView(views.APIView):
+    def get(self, request):
+        document_name_id = request.query_params.get("document_name_id")
+        initial_date = request.query_params.get("initial_date")
+        final_date = request.query_params.get("final_date")
+        only_permanents = request.query_params.get("only_permanents")
+
+        frequency_sheet_filter = {}
+        administrative_process_filter = {}
+        frequecy_relation_filter = {}
+        box_archiving_filter = {}
+
+        if document_name_id:
+            frequency_sheet_filter["document_name_id"] = document_name_id
+            administrative_process_filter["document_name_id"] = document_name_id
+            frequecy_relation_filter["document_name_id"] = document_name_id
+            #box_archiving_filter["document_name_id"] = document_name_id
+        
+        if initial_date: 
+            frequency_sheet_filter["reference_period__gte"] = initial_date
+            administrative_process_filter["archiving_date__gte"] = initial_date
+            frequecy_relation_filter["received_date__gte"] = initial_date
+            box_archiving_filter["received_date__gte"] = initial_date
+
+        if final_date: 
+            frequency_sheet_filter["reference_period__lte"] = final_date
+            administrative_process_filter["archiving_date__lte"] = final_date
+            frequecy_relation_filter["received_date__lte"] = final_date
+            box_archiving_filter["received_date__lte"] = final_date
+
+        frequency_sheet = FrequencySheet.objects.filter(**frequency_sheet_filter)
+        administrative_process = AdministrativeProcess.objects.filter(**administrative_process_filter)
+        frequency_relation = FrequencyRelation.objects.filter(**frequecy_relation_filter)
+        box_archiving = BoxArchiving.objects.filter(**box_archiving_filter)
+
+        response = FrequencySheetSerializer(
+            frequency_sheet,
+            many=True).data
+
+        response += AdministrativeProcessSerializer(
+            administrative_process,
+            many=True).data
+
+        response += FrequencyRelationSerializer(
+            frequency_relation,
+            many=True).data
+
+        response += BoxArchivingSerializer(
+            box_archiving,
+            many=True).data
+        
+        return Response(response, status=200)
+
+class AdministrativeProcessReport(views.APIView):
+    def get(self, request):
+        sender_unity = request.query_params.get("sender_unity")
+        initial_date = request.query_params.get("initial_date")
+        final_date = request.query_params.get("final_date")
+
+        filter_dict = {}
+        if sender_unity: filter_dict["sender_unity"] = sender_unity
+        if initial_date: filter_dict["archiving_date__gte"] = initial_date
+        if final_date: filter_dict["archiving_date__lte"] = final_date
+        response = AdministrativeProcessSerializer(
+            AdministrativeProcess.objects.filter(**filter_dict),
+            many=True)
+
+        return Response(response.data, status=200)
+
+class FrequencySheetReport(views.APIView):
+    def get(self, request):
+        cpf = request.query_params.get("cpf")
+        response = FrequencySheetSerializer(
+            FrequencySheet.objects.filter(cpf=cpf),
+            many=True)
+
+        return Response(response.data, status=200)
+
+class FrequencyRelationReport(views.APIView):
+    def get(self, request):
+        sender_unity = request.query_params.get("sender_unity")
+        reference_period = request.query_params.get("reference_period")
+
+        filter_dict = {}
+        if sender_unity: filter_dict["sender_unity"] = sender_unity
+        if reference_period: filter_dict["reference_period__in"] = reference_period
+        response = FrequencyRelationSerializer(
+            FrequencyRelation.objects.filter(**filter_dict),
+            many=True)
+
+        return Response(response.data, status=200)
+
+#class BoxArchivingReport(views.APIView):
+#    def get(self, request):
