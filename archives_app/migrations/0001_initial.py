@@ -39,6 +39,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('document_name', models.CharField(blank=True, max_length=100, null=True, unique=True)),
                 ('temporality', models.IntegerField(blank=True, null=True)),
+                ('isPerma', models.BooleanField(blank=True, null=True)),
             ],
         ),
         migrations.CreateModel(

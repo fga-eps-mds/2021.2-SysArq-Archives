@@ -82,7 +82,7 @@ class TestDocumentNameEndpoints:
         data = {
             "subject_name": "",
             "temporality": "",
-            "isPermanent": "",
+            "isPerma": "",
         }
 
         api_client = APIClient()
@@ -103,7 +103,7 @@ class TestDocumentNameEndpoints:
         data2 = {
             "subject_name": "1",
             "temporality": "",
-            "isPermanent": "",
+            "isPerma": "",
         }
 
         api_client = APIClient()
@@ -119,12 +119,12 @@ class TestDocumentNameEndpoints:
         data3 = {
             "subject_name": "2",
             "temporality": "",
-            "isPermanent": "true"
+            "isPerma": "true"
         }
         data4 = {
             "subject_name": "3",
             "temporality": "",
-            "isPermanent": "false",
+            "isPerma": "false",
         }
         api_client = APIClient()
         intermediary = api_client.post(
@@ -141,7 +141,7 @@ class TestDocumentNameEndpoints:
         data5 = {
             "subject_name": "4",
             "temporality": "",
-            "isPermanent": "false"
+            "isPerma": "false"
         }
 
         api_client = APIClient()
