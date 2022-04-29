@@ -423,7 +423,7 @@ class AdministrativeProcessReport(views.APIView):
 
 class FrequencySheetReport(views.APIView):
     def get(self, request):
-        cpf = request.query_params.get("cpf")
+        cpf = request.query_params.get("public_worker")
         response = FrequencySheetSerializer(
             FrequencySheet.objects.filter(cpf=cpf),
             many=True)
@@ -437,7 +437,10 @@ class FrequencyRelationReport(views.APIView):
 
         filter_dict = {}
         if sender_unity: filter_dict["sender_unity"] = sender_unity
-        if reference_period: filter_dict["reference_period__in"] = reference_period
+        if reference_period:
+            reference_period = reference_period.split(",")
+            filter_dict["reference_period__overlap"] = reference_period
+
         response = FrequencyRelationSerializer(
             FrequencyRelation.objects.filter(**filter_dict),
             many=True)
