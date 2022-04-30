@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 class DocumentName(models.Model):
     document_name = models.CharField(max_length=100, blank=True, null=True, unique=True)
     temporality = models.IntegerField(blank=True, null=True)
+    isPerma = models.BooleanField(blank=True, null=True)
 
 
 class PublicWorker(models.Model):

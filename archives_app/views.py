@@ -139,8 +139,8 @@ class BoxArchivingView(views.APIView):
                 if subject['document_name_id'] != '':
                     document_name_id = DocumentName.objects.get(pk=subject['document_name_id'])
                     sub = OriginBoxSubject.objects.create(document_name_id=document_name_id,
-                                                      year=subject['year'],
-                                                      month=subject['month'])
+                                                          year=subject['year'],
+                                                          month=subject['month'])
                     box.subject.add(sub.id)
 
             boxes.append(box)
@@ -171,7 +171,6 @@ class BoxArchivingView(views.APIView):
             unityId = Unity.objects.get(pk=request.data['unity_id'])
             box_archiving.unity_id = unityId
             box_archiving.save()
-
 
         return Response(status=201)
 
@@ -255,9 +254,8 @@ class SearchView(views.APIView):
             filter_dict_fk = {}
 
             if (
-                'id' in list(filter_dict.keys())[0] or
-                'sender_unity' in list(filter_dict.keys())[0] or
-                'sender_user' in list(filter_dict.keys())[0]
+                'id' in list(filter_dict.keys())[0] or 'sender_unity' in list(
+                    filter_dict.keys())[0] or 'sender_user' in list(filter_dict.keys())[0]
             ):
                 if 'abbreviation_id' in list(filter_dict.keys())[0]:
                     contains = 'abbreviation_id__name__icontains'
@@ -268,8 +266,7 @@ class SearchView(views.APIView):
                     contains = '{}__unity_name__icontains'.format(
                         list(filter_dict.keys())[0])
                 elif (
-                    'person_id' in list(filter_dict.keys())[0] or
-                    'sender_user' in list(filter_dict.keys())[0]
+                    'person_id' in list(filter_dict.keys())[0] or 'sender_user' in list(filter_dict.keys())[0]
                 ):
                     contains = '{}__name__icontains'.format(
                         list(filter_dict.keys())[0])

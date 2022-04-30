@@ -81,7 +81,8 @@ class TestDocumentNameEndpoints:
     def test_create(self):
         data = {
             "subject_name": "",
-            "temporality": ""
+            "temporality": "",
+            "isPerma": "",
         }
 
         api_client = APIClient()
@@ -101,7 +102,8 @@ class TestDocumentNameEndpoints:
     def test_retrieve(self):
         data2 = {
             "subject_name": "1",
-            "temporality": ""
+            "temporality": "",
+            "isPerma": "",
         }
 
         api_client = APIClient()
@@ -116,11 +118,13 @@ class TestDocumentNameEndpoints:
     def test_update(self):
         data3 = {
             "subject_name": "2",
-            "temporality": ""
+            "temporality": "",
+            "isPerma": "true"
         }
         data4 = {
             "subject_name": "3",
-            "temporality": ""
+            "temporality": "",
+            "isPerma": "false",
         }
         api_client = APIClient()
         intermediary = api_client.post(
@@ -136,7 +140,8 @@ class TestDocumentNameEndpoints:
     def test_destroy(self):
         data5 = {
             "subject_name": "4",
-            "temporality": ""
+            "temporality": "",
+            "isPerma": "false"
         }
 
         api_client = APIClient()
