@@ -159,9 +159,21 @@ class OriginBoxSerializer(serializers.ModelSerializer):
             return obj.file_location_id.file
         return ""
 
+    def get_received_date(self, obj):
+        if obj.boxarchiving_set.first().received_date is not None:
+            return obj.boxarchiving_set.first().received_date
+        return ""
+    
+    def get_process_number(self, obj):
+        if obj.boxarchiving_set.first().process_number is not None:
+            return obj.boxarchiving_set.first().process_number
+        return ""
+
     shelf_number = serializers.SerializerMethodField('get_shelf_number')
     rack_number = serializers.SerializerMethodField('get_rack_number')
     file_location = serializers.SerializerMethodField('get_file_location')
+    received_date = serializers.SerializerMethodField('get_received_date')
+    process_number = serializers.SerializerMethodField('get_process_number')
 
     class Meta:
         model = OriginBox
