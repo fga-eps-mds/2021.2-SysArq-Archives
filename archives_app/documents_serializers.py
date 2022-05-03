@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from archives_app.documents_models import (FrequencyRelation, BoxArchiving,
                                            AdministrativeProcess, OriginBox,
-                                           FrequencySheet, DocumentNames)
+                                           FrequencySheet, DocumentNames,
+                                           OriginBoxSubject)
 
 
 class FrequencySupport(serializers.ModelSerializer):
@@ -179,6 +180,56 @@ class OriginBoxSerializer(serializers.ModelSerializer):
         model = OriginBox
         fields = '__all__'
 
+
+
+class OriginBoxSubjectSerializer(serializers.ModelSerializer):
+    def get_origin_box(self, obj):
+        if obj.originbox_set.first() is not None:
+            return OriginBoxSerializer(obj.originbox_set.first()).data
+        else:
+            return ""
+
+    def get_received_date(self, obj):
+        box = obj.originbox_set.first().boxarchiving_set.first()
+        if box.received_date is not None:
+            return box.received_date
+        return ""
+
+    def get_document_name(self, obj):
+        if obj.document_name_id is not None:
+            return obj.document_name_id.document_name
+        return ""
+
+    def get_process_number(self, obj):
+        box = obj.originbox_set.first().boxarchiving_set.first()
+        if box.process_number is not None:
+            return box.process_number
+        return ""
+
+    def get_temporality_date(self, obj):
+        box = obj.originbox_set.first().boxarchiving_set.first()
+        if obj.document_name_id.temporality is not None:
+            if box.received_date is not None:
+                return box.received_date.year + obj.document_name_id.temporality
+        return ""
+    
+    def get_sender_unity_name(self, obj):
+        box = obj.originbox_set.first().boxarchiving_set.first()
+        if box.sender_unity  is not None:
+            return box.sender_unity.unity_name
+        return ""
+
+    origin_box = serializers.SerializerMethodField('get_origin_box')    
+    received_date = serializers.SerializerMethodField('get_received_date')
+    document_name = serializers.SerializerMethodField('get_document_name')
+    process_number = serializers.SerializerMethodField('get_process_number')
+    temporality_date = serializers.SerializerMethodField('get_temporality_date')
+    sender_unity_name = serializers.SerializerMethodField('get_sender_unity_name')
+
+
+    class Meta:
+        model = OriginBoxSubject
+        fields = '__all__'
 
 class DocumentNamesSerializer(serializers.ModelSerializer):
 
