@@ -375,7 +375,7 @@ class ReportView(views.APIView):
             box_archiving_filter["document_name_id"] = document_name_id
         
         if initial_date: 
-            frequency_sheet_filter["reference_period___gte"] = initial_date
+            frequency_sheet_filter["reference_period__gte"] = initial_date
             administrative_process_filter["archiving_date__gte"] = initial_date
             frequecy_relation_filter["received_date__gte"] = initial_date
             box_archiving_filter["originbox__boxarchiving__received_date__gte"] = initial_date
