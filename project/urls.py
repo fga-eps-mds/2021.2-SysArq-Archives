@@ -32,4 +32,6 @@ urlpatterns = [
     path('frequency-sheet-report/', views.FrequencySheetReport.as_view()),
     path('frequency-relation-report/', views.FrequencyRelationReport.as_view()),
     path('administrative-process-report/', views.AdministrativeProcessReport.as_view()),
+    path('box-archiving-report/', views.BoxArchivingReport.as_view()),
+    path('status-report/', views.StatusReport.as_view()),
 ]

@@ -11,7 +11,11 @@ from .documents_models import (BoxArchiving, FrequencyRelation, AdministrativePr
 from .documents_serializers import (FrequencySheetSerializer,
                                     AdministrativeProcessSerializer,
                                     FrequencyRelationSerializer,
-                                    BoxArchivingSerializer)
+                                    BoxArchivingSerializer,
+                                    OriginBoxSerializer,
+                                    OriginBoxSubjectSerializer)
+from django.db.models import F, ExpressionWrapper, DateTimeField
+from django.db.models.functions import TruncYear
 import json
 
 
@@ -368,24 +372,32 @@ class ReportView(views.APIView):
             frequency_sheet_filter["document_name_id"] = document_name_id
             administrative_process_filter["document_name_id"] = document_name_id
             frequecy_relation_filter["document_name_id"] = document_name_id
-            #box_archiving_filter["document_name_id"] = document_name_id
+            box_archiving_filter["document_name_id"] = document_name_id
         
         if initial_date: 
             frequency_sheet_filter["reference_period__gte"] = initial_date
             administrative_process_filter["archiving_date__gte"] = initial_date
             frequecy_relation_filter["received_date__gte"] = initial_date
-            box_archiving_filter["received_date__gte"] = initial_date
+            box_archiving_filter["originbox__boxarchiving__received_date__gte"] = initial_date
+  
 
         if final_date: 
             frequency_sheet_filter["reference_period__lte"] = final_date
             administrative_process_filter["archiving_date__lte"] = final_date
             frequecy_relation_filter["received_date__lte"] = final_date
-            box_archiving_filter["received_date__lte"] = final_date
+            box_archiving_filter["originbox__boxarchiving__received_date__lte"] = final_date
+
+        if only_permanents and only_permanents == "true":
+            frequency_sheet_filter["document_name_id__isPerma"] = True
+            administrative_process_filter["document_name_id__isPerma"] = True
+            frequecy_relation_filter["document_name_id__isPerma"] = True
+            box_archiving_filter["document_name_id__isPerma"] = True
 
         frequency_sheet = FrequencySheet.objects.filter(**frequency_sheet_filter)
         administrative_process = AdministrativeProcess.objects.filter(**administrative_process_filter)
         frequency_relation = FrequencyRelation.objects.filter(**frequecy_relation_filter)
-        box_archiving = BoxArchiving.objects.filter(**box_archiving_filter)
+        box_archiving = OriginBoxSubject.objects.filter(**box_archiving_filter)
+
 
         response = FrequencySheetSerializer(
             frequency_sheet,
@@ -399,7 +411,7 @@ class ReportView(views.APIView):
             frequency_relation,
             many=True).data
 
-        response += BoxArchivingSerializer(
+        response += OriginBoxSubjectSerializer(
             box_archiving,
             many=True).data
         
@@ -423,9 +435,13 @@ class AdministrativeProcessReport(views.APIView):
 
 class FrequencySheetReport(views.APIView):
     def get(self, request):
-        cpf = request.query_params.get("cpf")
+        cpf = request.query_params.get("public_worker")
+
+        filter_dict = {}
+
+        if cpf: filter_dict["cpf"] = cpf
         response = FrequencySheetSerializer(
-            FrequencySheet.objects.filter(cpf=cpf),
+            FrequencySheet.objects.filter(**filter_dict),
             many=True)
 
         return Response(response.data, status=200)
@@ -437,12 +453,52 @@ class FrequencyRelationReport(views.APIView):
 
         filter_dict = {}
         if sender_unity: filter_dict["sender_unity"] = sender_unity
-        if reference_period: filter_dict["reference_period__in"] = reference_period
+        if reference_period:
+            reference_period = reference_period.split(",")
+            filter_dict["reference_period__overlap"] = reference_period
+
         response = FrequencyRelationSerializer(
             FrequencyRelation.objects.filter(**filter_dict),
             many=True)
 
         return Response(response.data, status=200)
 
-#class BoxArchivingReport(views.APIView):
-#    def get(self, request):
+class BoxArchivingReport(views.APIView):
+    def get(self, request):
+        sender_unity = request.query_params.get("sender_unity")
+
+        filter_dict = {}
+        if sender_unity:
+            filter_dict["originbox__boxarchiving__sender_unity"] = sender_unity
+
+        response = OriginBoxSubjectSerializer(
+            OriginBoxSubject.objects.filter(**filter_dict),
+            many=True)
+
+        return Response(response.data, status=200)
+
+class StatusReport(views.APIView):
+    def get(self, request):
+        status = request.query_params.get("status")
+
+        filter_dict = {}
+
+        if status == "arquivado":
+            filter_dict["is_filed"] = True
+        elif status == "desarquivado":
+            filter_dict["is_filed"] = False
+        elif status == "eliminado":
+            filter_dict["is_eliminated"] = True
+        else:
+            pass
+
+        response = AdministrativeProcessSerializer(
+            AdministrativeProcess.objects.filter(**filter_dict),
+            many=True).data
+
+        response += BoxArchivingSerializer(
+            BoxArchiving.objects.filter(**filter_dict),
+            many=True).data
+
+        return Response(response, status=200)
+        
