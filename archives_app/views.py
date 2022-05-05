@@ -289,24 +289,6 @@ class SearchView(views.APIView):
                 return_dict['box_archiving'] = BoxArchivingSerializer(
                     box_archiving, many=True).data
 
-            if 'document_name_id' in list(filter_dict.keys())[0]:
-                boxes = []
-                for box in box_archiving:
-                    doc_names = box.document_names.filter(**filter_dict_fk)
-                    if box not in boxes and doc_names:
-                        boxes.append(box)
-                return_dict['box_archiving'] = BoxArchivingSerializer(
-                    boxes, many=True).data
-
-            if 'temporality_date' in list(filter_dict.keys())[0]:
-                boxes = []
-                for box in box_archiving:
-                    doc_names = box.document_names.filter(**filter_dict)
-                    if box not in boxes and doc_names:
-                        boxes.append(box)
-                return_dict['box_archiving'] = BoxArchivingSerializer(
-                    boxes, many=True).data
-
             if list(filter_dict.keys())[0] in self.frequency_relation_fields:
                 if not filter_dict_fk:
                     frequency_relation = frequency_relation.filter(**filter_dict)
