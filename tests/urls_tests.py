@@ -393,7 +393,6 @@ def box_archiving():
 
     assert response_file_location.status_code == 201
 
-
     data = {
         "origin_boxes": [
             {
@@ -479,6 +478,8 @@ def test_box_archiving_relation_post():
     assert response_box_archiving.status_code == 201
 
 # Testes do relatório
+
+
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
 def test_report_get():
@@ -488,6 +489,7 @@ def test_report_get():
         '/report/?document_name_id=1&initial_date=2022-10-04&final_date=2022-11-04&only_permanents=true')
 
     assert response_report_get.status_code == 200
+
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -509,6 +511,7 @@ def test_status_report_get():
 
     assert response_report_get.status_code == 200
 
+
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
 def test_administrative_process_report_get():
@@ -518,6 +521,7 @@ def test_administrative_process_report_get():
         '/administrative-process-report/?sender_unity=1&initial_date=2000-05-10&final_date=2022-05-04')
 
     assert response_report_get.status_code == 200
+
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -529,6 +533,7 @@ def test_frequency_sheet_report_get():
 
     assert response_report_get.status_code == 200
 
+
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
 def test_frequency_relation_report_get():
@@ -539,6 +544,7 @@ def test_frequency_relation_report_get():
 
     assert response_report_get.status_code == 200
 
+
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
 def test_box_archiving_report_get():
@@ -548,6 +554,8 @@ def test_box_archiving_report_get():
         '/box-archiving-report/?sender_unity=1')
 
     assert response_report_get.status_code == 200
+
+
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
 def test_delete_box_archiving_relation():
