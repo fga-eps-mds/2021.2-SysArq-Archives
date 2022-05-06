@@ -365,14 +365,42 @@ def box_archiving():
         header={"Content-name": "application/json"})
     assert response_name.status_code == 201
 
+    data_shelf = {
+        "number": 555,
+    }
+
+    response_shelf = api_client.post(
+        '/shelf/', data=data_shelf,
+        header={"Content-Type": "application/json"})
+    assert response_shelf.status_code == 201
+
+    data_rack = {
+        "number": 555,
+    }
+
+    response_rack = api_client.post(
+        '/rack/', data=data_rack,
+        header={"Content-Type": "application/json"})
+    assert response_rack.status_code == 201
+
+    data_file_location = {
+        "file": "local",
+    }
+
+    response_file_location = api_client.post(
+        '/file-location/', data=data_file_location,
+        header={"Content-Type": "application/json"})
+
+    assert response_file_location.status_code == 201
+
     data = {
         "origin_boxes": [
             {
                 "number": "1",
                 "year": 2020,
-                "rack_id": "",
-                "shelf_id": "",
-                "file_location_id": "",
+                "rack_id": response_rack.data['id'],
+                "shelf_id": response_shelf.data['id'],
+                "file_location_id": response_file_location.data['id'],
                 "box_notes": "",
                 "subjects_list": [
                     {
@@ -421,6 +449,11 @@ def test_box_archiving_relation_get_pk():
         response_box_archiving_get.data[0]['id']))
     assert response.status_code == 200
 
+    response_box_archiving = api_client.post(
+        '/box-archiving/', data=data,
+        format='json')
+    assert response_box_archiving.status_code == 400
+
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -444,15 +477,84 @@ def test_box_archiving_relation_post():
         format='json')
     assert response_box_archiving.status_code == 201
 
+# Testes do relatório
+
+
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
 def test_report_get():
     api_client = APIClient()
 
     response_report_get = api_client.get(
-        '/report/?document_name_id=1&initial_date=2022-10-04&final_date=2022-11-04')
+        '/report/?document_name_id=1&initial_date=2022-10-04&final_date=2022-11-04&only_permanents=true')
 
     assert response_report_get.status_code == 200
+
+
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_status_report_get():
+    api_client = APIClient()
+
+    response_report_get = api_client.get(
+        '/status-report/?status=desarquivado')
+
+    assert response_report_get.status_code == 200
+
+    response_report_get = api_client.get(
+        '/status-report/?status=eliminado')
+
+    assert response_report_get.status_code == 200
+
+    response_report_get = api_client.get(
+        '/status-report/?status=arquivado')
+
+    assert response_report_get.status_code == 200
+
+
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_administrative_process_report_get():
+    api_client = APIClient()
+
+    response_report_get = api_client.get(
+        '/administrative-process-report/?sender_unity=1&initial_date=2000-05-10&final_date=2022-05-04')
+
+    assert response_report_get.status_code == 200
+
+
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_frequency_sheet_report_get():
+    api_client = APIClient()
+
+    response_report_get = api_client.get(
+        '/frequency-sheet-report/?cpf=12345678910')
+
+    assert response_report_get.status_code == 200
+
+
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_frequency_relation_report_get():
+    api_client = APIClient()
+
+    response_report_get = api_client.get(
+        '/frequency-relation-report/?sender_unity=1&reference_period=05-2022')
+
+    assert response_report_get.status_code == 200
+
+
+@pytest.mark.django_db(transaction=False)
+@override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
+def test_box_archiving_report_get():
+    api_client = APIClient()
+
+    response_report_get = api_client.get(
+        '/box-archiving-report/?sender_unity=1')
+
+    assert response_report_get.status_code == 200
+
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -658,9 +760,6 @@ def test_search_without_specific_fields_from_admin_process():
         format='json')
     assert response_admin.status_code == 201
 
-    response = api_client.get('/search/?filter={"document_name_id":1}')
-    assert response.status_code == 200
-
 
 @pytest.mark.django_db(transaction=False)
 @override_settings(MIDDLEWARE=TESTS_MIDDLEWARE)
@@ -725,9 +824,6 @@ def test_search_without_specific_fields_from_frequency_sheet():
         '/frequency-sheet/', data=data,
         format='json')
     assert response_sheet.status_code == 201
-
-    response = api_client.get('/search/?filter={"document_name_id":"name"}')
-    assert response.status_code == 200
 
 
 @pytest.mark.django_db(transaction=False)

@@ -7,15 +7,12 @@ from .fields_serializers import FrontCoverSerializer, ShelfSerializer
 from .fields_models import BoxAbbreviations, DocumentName
 from .fields_models import Unity, Shelf, FrontCover, Rack, PublicWorker, FileLocation
 from .documents_models import (BoxArchiving, FrequencyRelation, AdministrativeProcess,
-                               OriginBox, FrequencySheet, OriginBoxSubject, DocumentNames, Document)
+                               OriginBox, FrequencySheet, OriginBoxSubject)
 from .documents_serializers import (FrequencySheetSerializer,
                                     AdministrativeProcessSerializer,
                                     FrequencyRelationSerializer,
                                     BoxArchivingSerializer,
-                                    OriginBoxSerializer,
                                     OriginBoxSubjectSerializer)
-from django.db.models import F, ExpressionWrapper, DateTimeField
-from django.db.models.functions import TruncYear
 import json
 
 
@@ -289,24 +286,6 @@ class SearchView(views.APIView):
                 return_dict['box_archiving'] = BoxArchivingSerializer(
                     box_archiving, many=True).data
 
-            if 'document_name_id' in list(filter_dict.keys())[0]:
-                boxes = []
-                for box in box_archiving:
-                    doc_names = box.document_names.filter(**filter_dict_fk)
-                    if box not in boxes and doc_names:
-                        boxes.append(box)
-                return_dict['box_archiving'] = BoxArchivingSerializer(
-                    boxes, many=True).data
-
-            if 'temporality_date' in list(filter_dict.keys())[0]:
-                boxes = []
-                for box in box_archiving:
-                    doc_names = box.document_names.filter(**filter_dict)
-                    if box not in boxes and doc_names:
-                        boxes.append(box)
-                return_dict['box_archiving'] = BoxArchivingSerializer(
-                    boxes, many=True).data
-
             if list(filter_dict.keys())[0] in self.frequency_relation_fields:
                 if not filter_dict_fk:
                     frequency_relation = frequency_relation.filter(**filter_dict)
@@ -355,7 +334,8 @@ class NumberByYearAndAbbreviation(views.APIView):
             return Response('Nao foi encontrado objeto com este valor', status=204)
         serializer = BoxAbbreviationsSerializer(queryset, many=True)
         return Response(serializer.data, status=200)
-  
+
+
 class ReportView(views.APIView):
     def get(self, request):
         document_name_id = request.query_params.get("document_name_id")
@@ -373,15 +353,14 @@ class ReportView(views.APIView):
             administrative_process_filter["document_name_id"] = document_name_id
             frequecy_relation_filter["document_name_id"] = document_name_id
             box_archiving_filter["document_name_id"] = document_name_id
-        
-        if initial_date: 
+
+        if initial_date:
             frequency_sheet_filter["reference_period__gte"] = initial_date
             administrative_process_filter["archiving_date__gte"] = initial_date
             frequecy_relation_filter["received_date__gte"] = initial_date
             box_archiving_filter["originbox__boxarchiving__received_date__gte"] = initial_date
-  
 
-        if final_date: 
+        if final_date:
             frequency_sheet_filter["reference_period__lte"] = final_date
             administrative_process_filter["archiving_date__lte"] = final_date
             frequecy_relation_filter["received_date__lte"] = final_date
@@ -398,7 +377,6 @@ class ReportView(views.APIView):
         frequency_relation = FrequencyRelation.objects.filter(**frequecy_relation_filter)
         box_archiving = OriginBoxSubject.objects.filter(**box_archiving_filter)
 
-
         response = FrequencySheetSerializer(
             frequency_sheet,
             many=True).data
@@ -414,8 +392,9 @@ class ReportView(views.APIView):
         response += OriginBoxSubjectSerializer(
             box_archiving,
             many=True).data
-        
+
         return Response(response, status=200)
+
 
 class AdministrativeProcessReport(views.APIView):
     def get(self, request):
@@ -424,14 +403,20 @@ class AdministrativeProcessReport(views.APIView):
         final_date = request.query_params.get("final_date")
 
         filter_dict = {}
-        if sender_unity: filter_dict["sender_unity"] = sender_unity
-        if initial_date: filter_dict["archiving_date__gte"] = initial_date
-        if final_date: filter_dict["archiving_date__lte"] = final_date
+        if sender_unity:
+            filter_dict["sender_unity"] = sender_unity
+
+        if initial_date:
+            filter_dict["archiving_date__gte"] = initial_date
+
+        if final_date:
+            filter_dict["archiving_date__lte"] = final_date
         response = AdministrativeProcessSerializer(
             AdministrativeProcess.objects.filter(**filter_dict),
             many=True)
 
         return Response(response.data, status=200)
+
 
 class FrequencySheetReport(views.APIView):
     def get(self, request):
@@ -439,12 +424,14 @@ class FrequencySheetReport(views.APIView):
 
         filter_dict = {}
 
-        if cpf: filter_dict["cpf"] = cpf
+        if cpf:
+            filter_dict["cpf"] = cpf
         response = FrequencySheetSerializer(
             FrequencySheet.objects.filter(**filter_dict),
             many=True)
 
         return Response(response.data, status=200)
+
 
 class FrequencyRelationReport(views.APIView):
     def get(self, request):
@@ -452,7 +439,8 @@ class FrequencyRelationReport(views.APIView):
         reference_period = request.query_params.get("reference_period")
 
         filter_dict = {}
-        if sender_unity: filter_dict["sender_unity"] = sender_unity
+        if sender_unity:
+            filter_dict["sender_unity"] = sender_unity
         if reference_period:
             reference_period = reference_period.split(",")
             filter_dict["reference_period__overlap"] = reference_period
@@ -462,6 +450,7 @@ class FrequencyRelationReport(views.APIView):
             many=True)
 
         return Response(response.data, status=200)
+
 
 class BoxArchivingReport(views.APIView):
     def get(self, request):
@@ -476,6 +465,7 @@ class BoxArchivingReport(views.APIView):
             many=True)
 
         return Response(response.data, status=200)
+
 
 class StatusReport(views.APIView):
     def get(self, request):
@@ -501,4 +491,3 @@ class StatusReport(views.APIView):
             many=True).data
 
         return Response(response, status=200)
-        
