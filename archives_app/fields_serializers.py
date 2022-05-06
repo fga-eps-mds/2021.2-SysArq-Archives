@@ -37,7 +37,7 @@ class RackSerializer(serializers.ModelSerializer):
         model = Rack
         fields = '__all__'
 
-   
+
 class LocationSerializer(serializers.ModelSerializer):
 
     class Meta:

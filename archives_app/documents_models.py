@@ -112,6 +112,6 @@ class AdministrativeProcess(Document):
     file_location_id = models.ForeignKey(FileLocation, on_delete=models.PROTECT,
                                          blank=True, null=True)
     box_abbreviation_id = models.ForeignKey(BoxAbbreviations, on_delete=models.PROTECT,
-                                         blank=True, null=True)
+                                            blank=True, null=True)
     box_number = models.CharField(max_length=100, blank=True, null=True)
     box_year = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(1900)])
