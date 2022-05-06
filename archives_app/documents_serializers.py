@@ -12,7 +12,7 @@ class FrequencySupport(serializers.ModelSerializer):
 
 
 class BoxArchivingSerializer(serializers.ModelSerializer):
-    
+
     def get_sender_unity(self, obj):
         if obj.sender_unity is not None:
             return obj.sender_unity.unity_name
