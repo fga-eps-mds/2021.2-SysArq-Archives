@@ -207,9 +207,9 @@ class BoxArchivingDetailsView(views.APIView):
                     box_dict['number'] = box_n.number
                     box_dict['year'] = box_n.year
                     box_dict['box_notes'] = box_n.box_notes
-                    box_dict['rack_id'] = box_n.rack_id
-                    box_dict['shelf_id'] = box_n.shelf_id
-                    box_dict['file_location_id'] = box_n.file_location_id
+                    box_dict['rack_id'] = box_n.rack_id.id
+                    box_dict['shelf_id'] = box_n.shelf_id.id
+                    box_dict['file_location_id'] = box_n.file_location_id.id
 
                     box_dict['subject_list'] = list()
                     for subject in box_n.subject.all():
