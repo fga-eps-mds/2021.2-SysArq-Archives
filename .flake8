@@ -2,7 +2,7 @@
 ignore = D203
 builtins = _
 max-line-length=119
-extend-ignore = E203, W503
+extend-ignore = E203, E501, F821, W503
 exclude =
     # No need to traverse our git directory
     parser.py,
@@ -21,4 +21,4 @@ exclude =
     dist
     .egg-info
     .tox
-max-complexity = 10 
+max-complexity = 21
