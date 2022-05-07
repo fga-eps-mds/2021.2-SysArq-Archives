@@ -118,6 +118,9 @@ class BoxArchivingView(views.APIView):
         origin_boxes = request.data['origin_boxes']
         boxes = list()
 
+        if BoxArchiving.objects.filter(process_number=request.data['process_number']).exists():
+            return Response(status=400)
+
         for box_n in origin_boxes:
             box = OriginBox.objects.create(
                 number=box_n['number'],
@@ -144,12 +147,11 @@ class BoxArchivingView(views.APIView):
                                                           month=subject['month'])
                     box.subject.add(sub.id)
 
+            box.save()
             boxes.append(box)
 
         sender_unity_id = Unity.objects.get(pk=request.data['sender_unity'])
 
-        if BoxArchiving.objects.filter(process_number=request.data['process_number']).exists():
-            return Response(status=400)
 
         box_archiving = BoxArchiving.objects.create(
             process_number=request.data['process_number'],
@@ -202,9 +204,9 @@ class BoxArchivingDetailsView(views.APIView):
                     box_dict['number'] = box_n.number
                     box_dict['year'] = box_n.year
                     box_dict['box_notes'] = box_n.box_notes
-                    box_dict['rack_id'] = box_n.rack_id
-                    box_dict['shelf_id'] = box_n.shelf_id
-                    box_dict['file_location_id'] = box_n.file_location_id
+                    box_dict['rack_id'] = box_n.rack_id.id
+                    box_dict['shelf_id'] = box_n.shelf_id.id
+                    box_dict['file_location_id'] = box_n.file_location_id.id
 
                     box_dict['subject_list'] = list()
                     for subject in box_n.subject.all():
