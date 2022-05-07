@@ -1,5 +1,5 @@
 [flake8]
-ignore = D203
+ignore = D203, C901
 builtins = _
 max-line-length=119
 extend-ignore = E203, W503

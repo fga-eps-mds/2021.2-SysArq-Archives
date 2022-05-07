@@ -1,13 +1,14 @@
 [run]
     source = .
     omit =
+        parser.py
         manage.py
         project/asgi.py
         project/wsgi.py
         *_tests.py
         **/migrations/*.py
         release.py
-
+        archives_app/middleware.py
 [report]
     fail_under = 90
     show_missing = True

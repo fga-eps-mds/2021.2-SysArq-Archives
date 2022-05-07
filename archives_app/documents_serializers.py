@@ -13,7 +13,7 @@ class FrequencySupport(serializers.ModelSerializer):
 
 
 class BoxArchivingSerializer(serializers.ModelSerializer):
-    
+
     def get_sender_unity(self, obj):
         if obj.sender_unity is not None:
             return obj.sender_unity.unity_name
@@ -164,7 +164,7 @@ class OriginBoxSerializer(serializers.ModelSerializer):
         if obj.boxarchiving_set.first().received_date is not None:
             return obj.boxarchiving_set.first().received_date
         return ""
-    
+
     def get_process_number(self, obj):
         if obj.boxarchiving_set.first().process_number is not None:
             return obj.boxarchiving_set.first().process_number
@@ -181,8 +181,8 @@ class OriginBoxSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class OriginBoxSubjectSerializer(serializers.ModelSerializer):
+
     def get_origin_box(self, obj):
         if obj.originbox_set.first() is not None:
             return OriginBoxSerializer(obj.originbox_set.first()).data
@@ -212,24 +212,24 @@ class OriginBoxSubjectSerializer(serializers.ModelSerializer):
             if box.received_date is not None:
                 return box.received_date.year + obj.document_name_id.temporality
         return ""
-    
+
     def get_sender_unity_name(self, obj):
         box = obj.originbox_set.first().boxarchiving_set.first()
-        if box.sender_unity  is not None:
+        if box.sender_unity is not None:
             return box.sender_unity.unity_name
         return ""
 
-    origin_box = serializers.SerializerMethodField('get_origin_box')    
+    origin_box = serializers.SerializerMethodField('get_origin_box')
     received_date = serializers.SerializerMethodField('get_received_date')
     document_name = serializers.SerializerMethodField('get_document_name')
     process_number = serializers.SerializerMethodField('get_process_number')
     temporality_date = serializers.SerializerMethodField('get_temporality_date')
     sender_unity_name = serializers.SerializerMethodField('get_sender_unity_name')
 
-
     class Meta:
         model = OriginBoxSubject
         fields = '__all__'
+
 
 class DocumentNamesSerializer(serializers.ModelSerializer):
 
