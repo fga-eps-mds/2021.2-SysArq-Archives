@@ -9,8 +9,8 @@ class DocumentName(models.Model):
 
 
 class PublicWorker(models.Model):
-    name = models.CharField(max_length=150)
-    cpf = models.CharField(max_length=11, unique=True)
+    name = models.CharField(max_length=150, blank=True)
+    cpf = models.CharField(max_length=11, unique=True, blank=True)
 
 
 class Unity(models.Model):
